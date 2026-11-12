@@ -198,12 +198,17 @@ tooltip { border-radius: 7px !important; }
     -moz-window-dragging: no-drag;
   }
   .titlebar-button > .toolbarbutton-icon { display: none !important; }
-  .titlebar-close { order: 0 !important; background-color: #FF5F57 !important; }
-  .titlebar-min { order: 1 !important; background-color: #FEBC2E !important; }
-  :is(.titlebar-max, .titlebar-restore) { order: 2 !important; background-color: #28C840 !important; }
+  /* Windows dessine ×, – et □ avec la police Segoe Fluent Icons (pseudo-élément ::before) : masqués */
+  .titlebar-button::before,
+  .titlebar-button::after { display: none !important; content: none !important; }
+  .titlebar-button:is(:hover, :active, :focus-visible) { outline: none !important; }
+  /* :is(…) + .titlebar-button : plus spécifique que les règles :hover de Windows (fond gris/rouge carré) */
+  .titlebar-button:is(.titlebar-close, .titlebar-close:hover, .titlebar-close:active) { order: 0 !important; background-color: #FF5F57 !important; color: transparent !important; }
+  .titlebar-button:is(.titlebar-min, .titlebar-min:hover, .titlebar-min:active) { order: 1 !important; background-color: #FEBC2E !important; color: transparent !important; }
+  .titlebar-button:is(.titlebar-max, .titlebar-restore, .titlebar-max:hover, .titlebar-restore:hover) { order: 2 !important; background-color: #28C840 !important; color: transparent !important; }
   .titlebar-button:hover { filter: brightness(.86); }
   #navigator-toolbox:-moz-window-inactive .titlebar-button:not(:hover) {
-    background-color: color-mix(in srgb, currentColor 22%, transparent) !important;
+    background-color: rgba(128, 128, 128, .42) !important;
   }
 }
 

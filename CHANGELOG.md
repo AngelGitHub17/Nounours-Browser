@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 1.2.1 — 2026-11-12
+
+- Windows : les boutons de fenêtre sont de vrais ronds rouge / jaune / vert, sans les symboles ×, – et □ de Windows par-dessus (ni fond carré au survol).
+
 ## 1.2.0 — 2026-11-12
 
 - **Nouveau nom : NounoursBrowser** (sans espace) partout : fenêtres, menus, Paramètres, « À propos », installeur, raccourcis, appli macOS (« NounoursBrowser.app »). L'ancienne installation et ses raccourcis sont remplacés automatiquement.
