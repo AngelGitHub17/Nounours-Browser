@@ -1,0 +1,20 @@
+Nounours Browser — NounoursCorp
+================================
+
+Le plus simple : installez et mettez à jour Nounours Browser depuis NounoursLauncher.
+
+Lancement manuel :
+  Windows : NounoursBrowser.exe
+  macOS   : Nounours Browser.app
+  Linux   : ./nounours-browser
+
+Au premier lancement, le moteur (Firefox ESR, ~90 Mo) est téléchargé automatiquement.
+Votre profil (marque-pages, extensions, réglages) est rangé à part et n'est jamais
+effacé par une mise à jour :
+  Windows : %LOCALAPPDATA%\NounoursBrowser
+  macOS   : ~/Library/Application Support/NounoursBrowser
+  Linux   : ~/.local/share/nounours-browser
+
+Mode Ultra éco (moins de RAM, isolation des sites réduite) : lancez une fois avec --eco
+(--balanced pour revenir au mode normal). Vos préférences moteur personnelles :
+fichier user-overrides.js dans le dossier ci-dessus.

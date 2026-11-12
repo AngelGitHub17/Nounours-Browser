@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Réglages Nounours</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="brand">🧸 Nounours Browser</div>
+      <nav id="nav">
+        <a href="#apparence" class="active"><span class="ico" style="background:#007AFF">◐</span>Apparence</a>
+        <a href="#memoire"><span class="ico" style="background:#28B550">⚡︎</span>Mémoire</a>
+        <a href="#accueil"><span class="ico" style="background:#FF9500">⌂</span>Page d'accueil</a>
+        <a href="#extensions"><span class="ico" style="background:#AF52DE">🧩</span>Extensions</a>
+        <a href="#general"><span class="ico" style="background:#8E8E93">⚙︎</span>Général</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section id="apparence">
+        <h1>Apparence</h1>
+        <div class="group">
+          <div class="item"><span>Utiliser le thème Nounours</span><label class="switch"><input type="checkbox" id="theme-enabled"><span></span></label></div>
+          <div class="item"><span>Mode</span>
+            <div class="segmented" id="theme-mode"><button data-v="light">Clair</button><button data-v="dark">Sombre</button><button data-v="auto">Auto</button></div></div>
+          <div class="item"><span>Style</span><div class="segmented" id="theme-preset"></div></div>
+          <div class="item"><span>Couleur d'accentuation</span><div class="swatches" id="theme-accent"></div></div>
+        </div>
+        <p class="note">Désactivez le thème Nounours pour utiliser un thème installé depuis addons.mozilla.org. La forme des onglets et de la barre d'adresse (style macOS) vient de <code>userChrome.css</code> et reste active.</p>
+      </section>
+
+      <section id="memoire">
+        <h1>Mémoire</h1>
+        <div class="stats">
+          <div><b id="st-open">–</b><span>onglets ouverts</span></div>
+          <div><b id="st-sleep">–</b><span>endormis maintenant</span></div>
+          <div><b id="st-total">–</b><span>mises en veille au total</span></div>
+        </div>
+        <div class="group">
+          <div class="item"><span>Mode d'économie</span>
+            <div class="segmented" id="ram-mode"><button data-v="eco">Éco</button><button data-v="balanced">Équilibré</button><button data-v="performance">Performance</button><button data-v="custom">Personnalisé</button></div></div>
+          <div class="item sub" id="ram-desc"></div>
+          <div class="item custom"><span>Endormir après (minutes, 0 = jamais)</span><input type="number" id="ram-idle" min="0" max="1440"></div>
+          <div class="item custom"><span>Onglets actifs au maximum (0 = illimité)</span><input type="number" id="ram-max" min="0" max="200"></div>
+          <div class="item"><span>Protéger les onglets qui jouent du son</span><label class="switch"><input type="checkbox" id="ram-audible"><span></span></label></div>
+          <div class="item"><span>Protéger les onglets épinglés</span><label class="switch"><input type="checkbox" id="ram-pinned"><span></span></label></div>
+        </div>
+        <div class="group">
+          <div class="item col"><span>Sites jamais endormis <small class="muted">(un domaine par ligne)</small></span>
+            <textarea id="ram-white" rows="4" placeholder="music.youtube.com&#10;meet.google.com" spellcheck="false"></textarea></div>
+        </div>
+        <p class="note">Les réglages profonds du moteur (nombre de processus, cache, isolation des sites) sont dans <code>user.js</code>. Lancez le navigateur en mode <b>Ultra éco</b> avec le lanceur pour les réduire encore (voir README).</p>
+      </section>
+
+      <section id="accueil">
+        <h1>Page d'accueil</h1>
+        <div class="group">
+          <div class="item"><span>Votre prénom</span><input type="text" id="nt-name" maxlength="30" placeholder="Facultatif"></div>
+          <div class="item"><span>Afficher l'horloge</span><label class="switch"><input type="checkbox" id="nt-clock"><span></span></label></div>
+          <div class="item"><span>Afficher le message d'accueil</span><label class="switch"><input type="checkbox" id="nt-greet"><span></span></label></div>
+          <div class="item col"><span>Fond d'écran</span><div class="wallpapers" id="nt-wp"></div></div>
+        </div>
+      </section>
+
+      <section id="extensions">
+        <h1>Extensions</h1>
+        <div class="group">
+          <div class="item"><span>Toutes les extensions Firefox sont compatibles.</span><button class="btn" id="amo">Ouvrir la boutique ↗</button></div>
+          <div class="item"><span>Gérer les extensions installées</span><span class="muted">Menu ≡ › Extensions et thèmes</span></div>
+        </div>
+      </section>
+
+      <section id="general">
+        <h1>Général</h1>
+        <div class="group">
+          <div class="item"><span>Revoir le démarrage rapide</span><button class="btn" id="replay">Lancer</button></div>
+          <div class="item"><span>Exporter mes réglages</span><button class="btn" id="export">Exporter…</button></div>
+          <div class="item"><span>Importer des réglages</span><button class="btn" id="import">Importer…</button><input type="file" id="import-file" accept="application/json" hidden></div>
+          <div class="item"><span>Réinitialiser</span><button class="btn danger" id="reset">Tout réinitialiser</button></div>
+        </div>
+        <p class="note">Nounours Browser 1.0 — basé sur le moteur Gecko de Firefox. NounoursCorp.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="../shared/preview-shim.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="../shared/themes.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bienvenue dans Nounours Browser</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div id="wallpaper" class="wp-aube"></div>
+
+  <main class="window glass" role="dialog" aria-labelledby="title">
+    <header class="window-bar">
+      <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      <span class="window-title">Assistant de démarrage</span>
+      <span class="dots" id="dots" aria-hidden="true"></span>
+    </header>
+
+    <div class="steps" id="steps">
+
+      <!-- 0. Bonjour -->
+      <section class="step hello" data-step="0">
+        <img class="logo" src="../icons/icon.svg" alt="" width="96" height="96">
+        <h1 id="hello-word" class="hello-word">Bienvenue</h1>
+        <p class="lead">Un navigateur léger, compatible avec les extensions Firefox, que vous pouvez façonner à votre goût.</p>
+        <p class="muted">Quelques étapes, moins d'une minute. Vous pourrez tout modifier plus tard.</p>
+      </section>
+
+      <!-- 1. Apparence -->
+      <section class="step" data-step="1" hidden>
+        <h2 id="title">Choisissez une apparence</h2>
+        <p class="muted">Les changements s'appliquent en direct à tout le navigateur.</p>
+
+        <div class="mode-cards" id="mode-cards">
+          <button class="mode-card" data-mode="light"><span class="mini mini-light"></span>Clair</button>
+          <button class="mode-card" data-mode="dark"><span class="mini mini-dark"></span>Sombre</button>
+          <button class="mode-card" data-mode="auto"><span class="mini mini-auto"></span>Automatique</button>
+        </div>
+
+        <div class="row"><span class="label">Couleur d'accentuation</span><div class="swatches" id="accents"></div></div>
+        <div class="row"><span class="label">Style</span><div class="segmented" id="presets"></div></div>
+        <p class="muted small" id="preset-hint"></p>
+      </section>
+
+      <!-- 2. Mémoire -->
+      <section class="step" data-step="2" hidden>
+        <h2>Économie de mémoire</h2>
+        <p class="muted">Les onglets que vous n'utilisez pas « s'endorment » : ils restent dans la barre, mais libèrent leur RAM. Un clic les réveille.</p>
+        <div class="ram-cards" id="ram-cards">
+          <button class="ram-card" data-ram="eco"><b>🌱 Éco</b><span></span></button>
+          <button class="ram-card" data-ram="balanced"><b>⚖️ Équilibré</b><span></span></button>
+          <button class="ram-card" data-ram="performance"><b>🚀 Performance</b><span></span></button>
+        </div>
+        <label class="row check"><span class="switch"><input type="checkbox" id="protect-audible"><span></span></span>Ne jamais endormir un onglet qui joue du son</label>
+        <label class="row check"><span class="switch"><input type="checkbox" id="protect-pinned"><span></span></span>Ne jamais endormir les onglets épinglés</label>
+      </section>
+
+      <!-- 3. Accueil -->
+      <section class="step" data-step="3" hidden>
+        <h2>Votre page d'accueil</h2>
+        <p class="muted">Elle s'affiche à chaque nouvel onglet : horloge, recherche et raccourcis.</p>
+        <div class="row"><span class="label">Comment vous appeler&nbsp;?</span><input type="text" id="name" placeholder="Votre prénom (facultatif)" maxlength="30"></div>
+        <div class="row column"><span class="label">Fond d'écran</span><div class="wallpapers" id="wallpapers"></div></div>
+      </section>
+
+      <!-- 4. Visite -->
+      <section class="step" data-step="4" hidden>
+        <h2>Le tour de l'interface</h2>
+        <p class="muted">Cliquez sur les numéros pour découvrir chaque zone.</p>
+        <div class="mock" id="mock">
+          <div class="mock-tabs">
+            <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="mock-tab active">Accueil</div>
+            <div class="mock-tab">Wikipédia<button class="hotspot" data-spot="tabs">1</button></div>
+            <div class="mock-tab sleeping">YouTube 💤</div>
+          </div>
+          <div class="mock-nav">
+            <span class="mock-btn">‹</span><span class="mock-btn">›</span><span class="mock-btn">↻</span>
+            <div class="mock-url">didikaria.fr<button class="hotspot" data-spot="url">2</button></div>
+            <span class="mock-btn">🧸<button class="hotspot" data-spot="nounours">3</button></span>
+            <span class="mock-btn">🧩<button class="hotspot" data-spot="ext">4</button></span>
+            <span class="mock-btn">≡<button class="hotspot" data-spot="menu">5</button></span>
+          </div>
+          <div class="mock-page"></div>
+        </div>
+        <div class="spot-info glass-soft" id="spot-info"></div>
+      </section>
+
+      <!-- 5. Extensions -->
+      <section class="step" data-step="5" hidden>
+        <h2>Vos extensions Firefox fonctionnent</h2>
+        <p class="muted">Nounours Browser utilise le moteur de Firefox : toutes les extensions de addons.mozilla.org s'installent normalement.</p>
+        <ul class="tips">
+          <li><b>Installer :</b> ouvrez la boutique, choisissez une extension, cliquez sur « Ajouter à Firefox ».</li>
+          <li><b>Gérer :</b> bouton 🧩 de la barre d'outils, ou <kbd data-mod>Ctrl</kbd>+<kbd>Maj</kbd>+<kbd>A</kbd>.</li>
+          <li><b>Conseil RAM :</b> chaque extension consomme de la mémoire. Gardez seulement celles que vous utilisez vraiment.</li>
+        </ul>
+        <button class="btn" id="open-amo">Ouvrir la boutique d'extensions ↗</button>
+      </section>
+
+      <!-- 6. Raccourcis -->
+      <section class="step" data-step="6" hidden>
+        <h2>Raccourcis essentiels</h2>
+        <table class="keys" id="keys"></table>
+      </section>
+
+      <!-- 7. Fin -->
+      <section class="step hello" data-step="7" hidden>
+        <div class="logo" aria-hidden="true">✨</div>
+        <h1>Tout est prêt</h1>
+        <p class="lead">Le bouton 🧸 de la barre d'outils ouvre le Centre de contrôle (thème, mémoire, veille des onglets).</p>
+        <p class="muted">Pour revoir cette présentation : Réglages Nounours › « Revoir le démarrage rapide ».</p>
+      </section>
+    </div>
+
+    <footer class="window-foot">
+      <button class="btn" id="back" hidden>Retour</button>
+      <span class="spacer"></span>
+      <button class="link-btn" id="skip">Passer</button>
+      <button class="btn primary large" id="next">Commencer</button>
+    </footer>
+  </main>
+
+  <script src="../shared/preview-shim.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="../shared/themes.js"></script>
+  <script src="onboarding.js"></script>
+</body>
+</html>

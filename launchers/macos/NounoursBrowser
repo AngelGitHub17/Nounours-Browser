@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Point d'entrée de « Nounours Browser.app »
+exec "$(cd "$(dirname "$0")/../Resources/app" && pwd)/nounours-browser.sh" "$@"

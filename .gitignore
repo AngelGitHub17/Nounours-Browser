@@ -1,0 +1,6 @@
+build/
+dist/
+profile/
+*.exe
+.DS_Store
+node_modules/

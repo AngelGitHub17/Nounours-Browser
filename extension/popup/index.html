@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../shared/ui.css">
+  <style>
+    body { width: 320px; padding: 12px; background: var(--bg); }
+    .card { background: var(--surface-solid); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 0 0 .5px var(--sep); }
+    .card h3 { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .big { font: 600 22px var(--font-display); }
+    .big small { font: 12px var(--font); color: var(--muted); display: block; }
+    .segmented { display: flex; }
+    .segmented button { flex: 1; padding: 5px 4px; }
+    .swatches { gap: 8px; margin-top: 10px; }
+    .swatch { width: 18px; height: 18px; }
+    .btn { width: 100%; }
+    .row { display: flex; gap: 8px; }
+    .row .btn { flex: 1; }
+    #toast { font-size: 12px; color: var(--muted); text-align: center; min-height: 16px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>Apparence</h3>
+    <div class="segmented" id="mode">
+      <button data-mode="light">☀︎ Clair</button>
+      <button data-mode="dark">☾ Sombre</button>
+      <button data-mode="auto">Auto</button>
+    </div>
+    <div class="swatches" id="accents"></div>
+  </div>
+
+  <div class="card">
+    <h3>Mémoire</h3>
+    <div class="grid">
+      <div class="big"><span id="open">–</span><small>onglets ouverts</small></div>
+      <div class="big"><span id="sleeping">–</span><small>endormis</small></div>
+    </div>
+    <div class="segmented" id="ram" style="margin:10px 0">
+      <button data-ram="eco">Éco</button>
+      <button data-ram="balanced">Équilibré</button>
+      <button data-ram="performance">Perf.</button>
+    </div>
+    <button class="btn primary" id="sleep">Endormir les autres onglets</button>
+    <div id="toast"></div>
+  </div>
+
+  <div class="row">
+    <button class="btn" id="settings">Réglages</button>
+    <button class="btn" id="amo">Extensions ↗</button>
+  </div>
+
+  <script src="../shared/preview-shim.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="../shared/themes.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

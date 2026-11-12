@@ -1,0 +1,116 @@
+/* Composants visuels partagés — esprit macOS */
+:root {
+  --accent: #007AFF;
+  --bg: #F5F5F7;
+  --surface: rgba(255, 255, 255, .72);
+  --surface-solid: #FFFFFF;
+  --surface-2: rgba(0, 0, 0, .04);
+  --text: #1D1D1F;
+  --muted: #6E6E73;
+  --sep: rgba(0, 0, 0, .1);
+  --shadow: 0 20px 60px rgba(0, 0, 0, .18), 0 0 0 .5px rgba(0, 0, 0, .12);
+  --radius: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", "Cantarell", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+:root[data-scheme="dark"] {
+  --bg: #1C1C1E;
+  --surface: rgba(40, 40, 42, .72);
+  --surface-solid: #2C2C2E;
+  --surface-2: rgba(255, 255, 255, .06);
+  --text: #F5F5F7;
+  --muted: #98989D;
+  --sep: rgba(255, 255, 255, .1);
+  --shadow: 0 20px 60px rgba(0, 0, 0, .5), 0 0 0 .5px rgba(255, 255, 255, .12);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  font: 13px/1.45 var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -.01em; margin: 0; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.muted { color: var(--muted); }
+
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(30px) saturate(1.6);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Boutons */
+.btn {
+  appearance: none; border: 0; cursor: pointer;
+  font: 500 13px var(--font);
+  padding: 7px 16px; border-radius: 8px;
+  background: var(--surface-2); color: var(--text);
+  box-shadow: inset 0 0 0 .5px var(--sep);
+  transition: filter .12s, transform .06s;
+}
+.btn:hover { filter: brightness(.96); }
+:root[data-scheme="dark"] .btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(.98); }
+.btn.primary { background: var(--accent); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+.btn.large { padding: 10px 26px; font-size: 14px; border-radius: 10px; }
+.btn:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+
+/* Contrôle segmenté */
+.segmented {
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: var(--surface-2); border-radius: 9px;
+  box-shadow: inset 0 0 0 .5px var(--sep);
+}
+.segmented button {
+  appearance: none; border: 0; background: transparent; color: var(--text);
+  font: 500 12px var(--font); padding: 5px 14px; border-radius: 7px; cursor: pointer;
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--surface-solid);
+  box-shadow: 0 1px 3px rgba(0,0,0,.15), 0 0 0 .5px rgba(0,0,0,.05);
+}
+
+/* Interrupteur */
+.switch { position: relative; width: 38px; height: 22px; flex: none; }
+.switch input { opacity: 0; width: 100%; height: 100%; margin: 0; position: absolute; cursor: pointer; z-index: 1; }
+.switch span { position: absolute; inset: 0; border-radius: 22px; background: color-mix(in srgb, var(--muted) 35%, transparent); transition: background .2s; }
+.switch span::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.switch input:checked + span { background: var(--accent); }
+.switch input:checked + span::after { transform: translateX(16px); }
+
+/* Pastilles de couleur d'accent */
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.swatch {
+  width: 22px; height: 22px; border-radius: 50%; border: 0; cursor: pointer;
+  box-shadow: inset 0 0 0 .5px rgba(0,0,0,.2);
+}
+.swatch[aria-pressed="true"] { outline: 2px solid var(--swatch); outline-offset: 2px; }
+
+/* Champs */
+input[type="text"], input[type="url"], input[type="number"], select, textarea {
+  font: 13px var(--font); color: var(--text);
+  background: var(--surface-solid); border: 0; border-radius: 7px;
+  padding: 6px 10px; box-shadow: inset 0 0 0 .5px var(--sep), 0 .5px 1px rgba(0,0,0,.05);
+}
+
+/* Feux tricolores décoratifs */
+.lights { display: flex; gap: 8px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.2); }
+.lights i:nth-child(1) { background: #FF5F57; }
+.lights i:nth-child(2) { background: #FEBC2E; }
+.lights i:nth-child(3) { background: #28C840; }
+
+/* Fonds d'écran (dégradés originaux) */
+.wp-aube     { background: radial-gradient(120% 90% at 10% 10%, #FFB38A 0%, transparent 55%), radial-gradient(100% 80% at 90% 20%, #C58CFF 0%, transparent 60%), radial-gradient(120% 100% at 50% 100%, #4E7BFF 0%, #1E2A6E 100%); }
+.wp-lagon    { background: radial-gradient(110% 90% at 0% 0%, #7BF2D8 0%, transparent 55%), radial-gradient(110% 90% at 100% 30%, #3AA7FF 0%, transparent 60%), linear-gradient(180deg, #1172C9, #06294F); }
+.wp-foret    { background: radial-gradient(100% 80% at 20% 10%, #CDEB8B 0%, transparent 55%), radial-gradient(120% 90% at 90% 60%, #2FA36B 0%, transparent 60%), linear-gradient(180deg, #1F6B4A, #0B2A1F); }
+.wp-crepuscule { background: radial-gradient(120% 80% at 80% 0%, #FF7A90 0%, transparent 55%), radial-gradient(100% 90% at 0% 70%, #7B4DFF 0%, transparent 60%), linear-gradient(180deg, #3A1C63, #120A24); }
+.wp-graphite { background: radial-gradient(120% 90% at 30% 0%, #8A8A95 0%, transparent 60%), linear-gradient(180deg, #3B3B42, #141418); }
+.wp-uni      { background: var(--bg); }

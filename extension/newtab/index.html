@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nouvel onglet</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <div id="wallpaper"></div>
+
+  <main>
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
+    <div class="greeting" id="greeting"></div>
+
+    <form class="search glass" id="search" role="search">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="q" type="text" placeholder="Rechercher ou saisir une adresse" autocomplete="off" autofocus>
+    </form>
+
+    <nav class="dock glass" id="dock" aria-label="Raccourcis"></nav>
+  </main>
+
+  <button class="corner glass" id="edit" title="Modifier les raccourcis">✎</button>
+  <button class="corner glass right" id="prefs" title="Réglages Nounours">⚙︎</button>
+
+  <dialog id="editor" class="glass">
+    <form method="dialog">
+      <h3>Raccourcis</h3>
+      <p class="muted">Un raccourci par ligne : <code>Nom | https://adresse</code></p>
+      <textarea id="shortcuts" rows="8" spellcheck="false"></textarea>
+      <div class="actions">
+        <button class="btn" value="cancel">Annuler</button>
+        <button class="btn primary" value="ok" id="save-shortcuts">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../shared/preview-shim.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="../shared/themes.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

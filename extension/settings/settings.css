@@ -1,0 +1,45 @@
+html, body { height: 100%; }
+.layout { display: flex; height: 100%; }
+.sidebar {
+  width: 230px; flex: none; padding: 16px 10px;
+  background: color-mix(in srgb, var(--text) 4%, var(--bg));
+  border-right: 1px solid var(--sep);
+}
+.sidebar .lights { padding: 0 8px 18px; }
+.brand { font-weight: 600; padding: 0 10px 12px; }
+.sidebar nav a {
+  display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 7px;
+  color: var(--text); text-decoration: none; margin-bottom: 2px;
+}
+.sidebar nav a:hover { background: var(--surface-2); }
+.sidebar nav a.active { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.ico { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 11px; }
+
+.content { flex: 1; overflow-y: auto; padding: 28px 40px 80px; scroll-behavior: smooth; }
+.content section { max-width: 680px; margin-bottom: 40px; scroll-margin-top: 20px; }
+.content h1 { font-size: 22px; margin-bottom: 14px; }
+.group { background: var(--surface-solid); border-radius: 10px; box-shadow: 0 0 0 .5px var(--sep); margin-bottom: 14px; }
+.item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 14px; border-top: 1px solid var(--sep); min-height: 44px; }
+.item:first-child { border-top: 0; }
+.item.col { flex-direction: column; align-items: stretch; }
+.item.sub { color: var(--muted); font-size: 12px; min-height: 0; }
+.item input[type="number"] { width: 80px; }
+.item textarea { width: 100%; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; }
+.note { color: var(--muted); font-size: 12px; }
+.btn.danger { color: #FF3B30; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.stats div { background: var(--surface-solid); border-radius: 10px; padding: 12px 14px; box-shadow: 0 0 0 .5px var(--sep); }
+.stats b { display: block; font: 600 24px var(--font-display); }
+.stats span { color: var(--muted); font-size: 12px; }
+
+.wallpapers { display: flex; gap: 10px; flex-wrap: wrap; }
+.wallpapers button {
+  width: 86px; height: 54px; border-radius: 8px; border: 0; cursor: pointer; color: #fff;
+  font: 500 11px var(--font); text-shadow: 0 1px 2px rgba(0,0,0,.5); display: flex; align-items: flex-end; padding: 5px;
+  box-shadow: inset 0 0 0 .5px rgba(0,0,0,.2);
+}
+.wallpapers button.wp-uni { color: var(--text); text-shadow: none; box-shadow: inset 0 0 0 1px var(--sep); }
+.wallpapers button[aria-pressed="true"] { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 720px) { .sidebar { display: none; } .content { padding: 20px; } }

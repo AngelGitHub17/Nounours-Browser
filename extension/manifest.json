@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "Nounours Browser",
+  "short_name": "Nounours",
+  "version": "1.0.0",
+  "description": "Compagnon de Nounours Browser : démarrage rapide, thèmes façon macOS, mise en veille des onglets pour économiser la RAM.",
+  "author": "DidiKaria — NounoursCorp",
+  "homepage_url": "https://didikaria.fr",
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "nounours-browser@didikaria.fr",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "theme",
+    "alarms",
+    "menus",
+    "search"
+  ],
+  "background": {
+    "scripts": [
+      "shared/settings.js",
+      "shared/themes.js",
+      "background.js"
+    ]
+  },
+  "action": {
+    "default_title": "Centre de contrôle Nounours",
+    "default_icon": "icons/icon.svg",
+    "default_popup": "popup/index.html"
+  },
+  "options_ui": {
+    "page": "settings/index.html",
+    "open_in_tab": true
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab/index.html"
+  },
+  "commands": {
+    "sleep-others": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Mettre en veille tous les autres onglets"
+    },
+    "toggle-dark": {
+      "suggested_key": {
+        "default": "Alt+Shift+D"
+      },
+      "description": "Basculer clair / sombre"
+    }
+  },
+  "version_name": "1.0.0"
+}

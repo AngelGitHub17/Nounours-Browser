@@ -1,0 +1,103 @@
+# Publie automatiquement une version de Nounours Browser.
+#
+# 1. scripts/set-version.sh X.Y.Z  +  section « ## X.Y.Z » dans CHANGELOG.md
+# 2. git commit + git push sur main
+# → si la release vX.Y.Z n'existe pas encore : build Windows/macOS/Linux, release GitHub,
+#   puis inscription dans le catalogue NounoursLauncher (mise à jour proposée aux utilisateurs).
+#
+# Réglages du dépôt (Settings → Secrets and variables → Actions) :
+#   Secret   NL_CI_TOKEN : jeton CI du panel NounoursLauncher (⚙ Réglages → Générer un jeton CI)
+#   Variable NL_API_URL  : https://nounourscorp.fr/launcher/api.php (valeur par défaut)
+#   Variable NL_SLUG     : nounours-browser (valeur par défaut)
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      build: ${{ steps.v.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=$(jq -r '.version_name // .version' extension/manifest.json)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          if gh release view "v$v" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "build=false" >> "$GITHUB_OUTPUT"; echo "v$v existe déjà : rien à publier."
+          else
+            echo "build=true" >> "$GITHUB_OUTPUT"; echo "Nouvelle version : v$v"
+          fi
+
+  windows-exe:
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compiler NounoursBrowser.exe (.NET Framework 4, aucune dépendance)
+        shell: pwsh
+        run: |
+          $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+          & $csc /nologo /target:winexe /optimize+ /win32icon:branding\logo.ico `
+            /r:System.Windows.Forms.dll /r:System.Drawing.dll `
+            /out:NounoursBrowser.exe launchers\windows\NounoursBrowser.cs
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: NounoursBrowser.exe
+
+  release:
+    needs: [check, windows-exe]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: exe
+          path: exe
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Vérifier l'extension (web-ext lint)
+        run: npx -y web-ext lint --source-dir extension --self-hosted
+      - name: Construire les archives
+        run: tools/package.sh exe/NounoursBrowser.exe
+      - name: Créer la release GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.check.outputs.version }}
+        run: |
+          scripts/changelog-section.sh "$V" > notes.md
+          [ -s notes.md ] || echo "Version $V" > notes.md
+          pre=""; case "$V" in *-*) pre="--prerelease" ;; esac
+          gh release create "v$V" build/release/*.zip --title "Nounours Browser $V" --notes-file notes.md --target "$GITHUB_SHA" $pre
+      - name: Inscrire dans le catalogue NounoursLauncher
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NL_CI_TOKEN: ${{ secrets.NL_CI_TOKEN }}
+          NL_API_URL: ${{ vars.NL_API_URL || 'https://nounourscorp.fr/launcher/api.php' }}
+          NL_SLUG: ${{ vars.NL_SLUG || 'nounours-browser' }}
+          TAG: v${{ needs.check.outputs.version }}
+        run: |
+          if [ -z "$NL_CI_TOKEN" ]; then
+            echo "::warning title=Catalogue::Secret NL_CI_TOKEN absent : release créée mais pas inscrite dans NounoursLauncher."
+            exit 0
+          fi
+          NOTES="$(cat notes.md)" scripts/publish-catalog.sh

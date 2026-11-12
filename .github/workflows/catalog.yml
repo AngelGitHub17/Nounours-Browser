@@ -1,0 +1,28 @@
+# Réinscrit une release existante dans le catalogue NounoursLauncher
+# (utile si NL_CI_TOKEN n'était pas encore configuré lors de la release).
+name: Catalogue NounoursLauncher
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de la release (ex. v1.0.0). Vide = dernière release."
+        required: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inscrire dans le catalogue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NL_CI_TOKEN: ${{ secrets.NL_CI_TOKEN }}
+          NL_API_URL: ${{ vars.NL_API_URL || 'https://nounourscorp.fr/launcher/api.php' }}
+          NL_SLUG: ${{ vars.NL_SLUG || 'nounours-browser' }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          [ -n "$NL_CI_TOKEN" ] || { echo "::error::Secret NL_CI_TOKEN manquant"; exit 1; }
+          TAG="${INPUT_TAG:-$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)}"
+          export TAG NOTES="$(scripts/changelog-section.sh "$TAG")"
+          scripts/publish-catalog.sh
