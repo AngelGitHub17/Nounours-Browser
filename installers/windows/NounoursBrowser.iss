@@ -67,8 +67,9 @@ Type: files; Name: "{autodesktop}\Nounours Browser.lnk"
 Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
 
 [Icons]
-Name: "{autoprograms}\NounoursBrowser"; Filename: "{app}\NounoursBrowser.exe"; Comment: "Navigateur léger NounoursCorp"
-Name: "{autodesktop}\NounoursBrowser"; Filename: "{app}\NounoursBrowser.exe"; Tasks: desktopicon
+; AppUserModelID identique à celui des fenêtres (nounours.cfg) : épingler une fenêtre épingle ce raccourci
+Name: "{autoprograms}\NounoursBrowser"; Filename: "{app}\NounoursBrowser.exe"; Comment: "Navigateur léger NounoursCorp"; AppUserModelID: "NounoursCorp.NounoursBrowser"
+Name: "{autodesktop}\NounoursBrowser"; Filename: "{app}\NounoursBrowser.exe"; Tasks: desktopicon; AppUserModelID: "NounoursCorp.NounoursBrowser"
 
 [Registry]
 ; Déclare NounoursBrowser comme navigateur possible (Paramètres Windows → Applications par défaut)

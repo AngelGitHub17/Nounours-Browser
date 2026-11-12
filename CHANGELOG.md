@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 1.2.3 — 2026-11-12
+
+- **Toujours le bon profil** : si le moteur est lancé directement (fenêtre épinglée à la barre des tâches, raccourci vers firefox.exe…), il passe automatiquement la main à NounoursBrowser, qui rouvre votre profil avec vos extensions et réglages.
+- **Windows** : les fenêtres et le raccourci NounoursBrowser partagent le même identifiant de barre des tâches ; épingler une fenêtre ouverte épingle désormais NounoursBrowser.
 ## 1.2.2 — 2026-11-12
 
 - **Favoris** : la barre des favoris est de retour (Ctrl+Maj+B pour la masquer ; ce choix est désormais conservé), ainsi que l'étoile ☆ dans la barre d'adresse.
