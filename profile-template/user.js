@@ -1,5 +1,5 @@
 // ============================================================================
-//  Nounours Browser — user.js (préférences appliquées à CHAQUE démarrage)
+//  NounoursBrowser — user.js (préférences appliquées à CHAQUE démarrage)
 //  Moteur : Gecko (Firefox). Objectif : RAM minimale, zéro superflu.
 //  Ce fichier est régénéré par le lanceur : modifiez profile-template/user.js
 //  (ou ajoutez vos lignes dans profile-template/user-overrides.js).
@@ -64,6 +64,12 @@ user_pref("browser.tabs.hoverPreview.showThumbnails", false);
 user_pref("browser.newtab.preload", false);
 
 // ---------- Fonctions lourdes désactivées ----------
+user_pref("browser.translations.enable", false);                 // traduction locale (modèles chargés en mémoire)
+user_pref("reader.parse-on-load.enabled", false);                // pas d'analyse « mode lecture » de chaque page
+user_pref("browser.places.interactions.enabled", false);
+user_pref("browser.urlbar.quicksuggest.enabled", false);
+user_pref("dom.private-attribution.submission.enabled", false);
+user_pref("browser.startup.preXulSkeletonUI", false);
 user_pref("browser.ml.enable", false);
 user_pref("browser.ml.chat.enabled", false);
 user_pref("browser.ml.linkPreview.enabled", false);

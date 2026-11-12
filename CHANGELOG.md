@@ -1,5 +1,14 @@
 # Journal des versions
 
+## 1.2.0 — 2026-11-12
+
+- **Nouveau nom : NounoursBrowser** (sans espace) partout : fenêtres, menus, Paramètres, « À propos », installeur, raccourcis, appli macOS (« NounoursBrowser.app »). L'ancienne installation et ses raccourcis sont remplacés automatiquement.
+- **Moins de mémoire** :
+  - les pages NounoursBrowser n'utilisent plus d'effet de flou d'arrière-plan, qui oblige le moteur graphique à garder des copies de l'écran ;
+  - les animations s'arrêtent d'elles-mêmes, et l'horloge ne se rafraîchit plus qu'une fois par minute ;
+  - au premier lancement, le démarrage rapide s'ouvre dans l'onglet d'accueil au lieu d'un second onglet (environ −60 Mo mesurés) ;
+  - traduction locale, analyse « mode lecture » et autres fonctions lourdes sont désactivées.
+- **Mode Ultra éco plus poussé** : les processus réseau, média, audio et graphique (Windows) rejoignent le processus principal.
 ## 1.1.0 — 2026-11-12
 
 - **Nounours Browser partout** : titres de fenêtre, menus, Paramètres, « À propos », icônes de fenêtre et de la barre des tâches. Le moteur Firefox ESR est désormais rebrandé et livré directement dans les installeurs (plus de téléchargement au premier lancement).

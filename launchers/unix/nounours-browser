@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# Nounours Browser — point d'entrée Linux
+# NounoursBrowser — point d'entrée Linux
 DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 exec "$DIR/app/nounours-browser.sh" "$@"

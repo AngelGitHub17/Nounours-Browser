@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Assemble « Nounours Browser.app » (à lancer sur macOS : CI macos-latest)
+# Assemble « NounoursBrowser.app » (à lancer sur macOS : CI macos-latest)
 #  = Firefox ESR officiel rebrandé + fichiers Nounours + lanceur, re-signé (signature ad hoc).
 # Usage : installers/macos/build-app.sh <Firefox.app> <dossier app/ (build/app)> <version>
 # Produit : build/release/NounoursBrowser-<v>-mac-universal.dmg et .zip
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 FF="${1:?Firefox.app}"; PAYLOAD="${2:?dossier app}"; V="${3:?version}"
-STAGE="$ROOT/build/stage-mac"; APP="$STAGE/Nounours Browser.app"
+STAGE="$ROOT/build/stage-mac"; APP="$STAGE/NounoursBrowser.app"
 rm -rf "$STAGE"; mkdir -p "$STAGE" "$ROOT/build/release"
 
 ditto "$FF" "$APP"
@@ -29,9 +29,9 @@ codesign --verify --deep --strict --verbose=2 "$APP"
 
 # .dmg (glisser dans Applications) — format préféré par NounoursLauncher
 DMG_SRC="$ROOT/build/dmg-src"; rm -rf "$DMG_SRC"; mkdir -p "$DMG_SRC"
-ditto "$APP" "$DMG_SRC/Nounours Browser.app"
+ditto "$APP" "$DMG_SRC/NounoursBrowser.app"
 ln -s /Applications "$DMG_SRC/Applications"
-hdiutil create -volname "Nounours Browser" -srcfolder "$DMG_SRC" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov \
+hdiutil create -volname "NounoursBrowser" -srcfolder "$DMG_SRC" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov \
   "$ROOT/build/release/NounoursBrowser-$V-mac-universal.dmg"
 
 # .zip portable (LISEZMOI à la racine : le launcher ne « remonte » pas le .app)

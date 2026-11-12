@@ -1,4 +1,4 @@
-// Nounours Browser — lanceur Windows (NounoursBrowser.exe)
+// NounoursBrowser — lanceur Windows (NounoursBrowser.exe)
 // Compilé avec le csc de .NET Framework 4 (présent sur tout Windows 10/11) : aucune dépendance.
 //
 //  - Au premier lancement, télécharge le moteur Firefox ESR dans %LOCALAPPDATA%\NounoursBrowser\engine
@@ -20,8 +20,8 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: System.Reflection.AssemblyTitle("Nounours Browser")]
-[assembly: System.Reflection.AssemblyProduct("Nounours Browser")]
+[assembly: System.Reflection.AssemblyTitle("NounoursBrowser")]
+[assembly: System.Reflection.AssemblyProduct("NounoursBrowser")]
 [assembly: System.Reflection.AssemblyCompany("NounoursCorp")]
 [assembly: System.Reflection.AssemblyCopyright("NounoursCorp")]
 // Remplacés par la CI (scripts/stamp-version.sh) ; « 0.0.0 » en développement
@@ -80,7 +80,7 @@ static class NounoursBrowser
 
             PrepareProfile(eco);
 
-            // Liens ou fichiers à ouvrir (ex. clic sur un lien quand Nounours Browser est le navigateur par défaut)
+            // Liens ou fichiers à ouvrir (ex. clic sur un lien quand NounoursBrowser est le navigateur par défaut)
             var cmd = new StringBuilder("-profile \"" + ProfileDir + "\"");
             string engineFile = Path.Combine(DataDir, "engine-version.txt");
             string lastEngine = File.Exists(engineFile) ? File.ReadAllText(engineFile).Trim() : "";
@@ -99,7 +99,7 @@ static class NounoursBrowser
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "Nounours Browser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, "NounoursBrowser", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
     }
@@ -140,7 +140,7 @@ static class NounoursBrowser
         SafeCopy(Path.Combine(AppDir, "nounours-browser.xpi"), Path.Combine(ProfileDir, "extensions", ExtId + ".xpi"));
     }
 
-    // Quand Nounours Browser est déjà ouvert, Firefox garde certains fichiers ouverts (l'extension .xpi
+    // Quand NounoursBrowser est déjà ouvert, Firefox garde certains fichiers ouverts (l'extension .xpi
     // notamment) : Windows refuse alors de les remplacer. On ne réécrit donc que ce qui a changé,
     // et un fichier verrouillé est simplement mis à jour au prochain démarrage.
     static void SafeCopy(string src, string dst)
@@ -264,7 +264,7 @@ static class NounoursBrowser
 
         public ProgressForm()
         {
-            Text = "Nounours Browser";
+            Text = "NounoursBrowser";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -273,7 +273,7 @@ static class NounoursBrowser
             BackColor = Color.White;
             try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
 
-            var title = new Label { Text = "Préparation de Nounours Browser", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(20, 16) };
+            var title = new Label { Text = "Préparation de NounoursBrowser", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(20, 16) };
             status.Text = "Téléchargement du moteur (Firefox ESR)… première ouverture uniquement.";
             status.AutoSize = false; status.Size = new Size(380, 22); status.Location = new Point(20, 50);
             status.ForeColor = Color.FromArgb(110, 110, 115);

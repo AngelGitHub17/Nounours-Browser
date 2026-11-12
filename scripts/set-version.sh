@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Change la version de Nounours Browser (source unique : extension/manifest.json)
+# Change la version de NounoursBrowser (source unique : extension/manifest.json)
 # Usage : scripts/set-version.sh 1.1.0   (ou 1.2.0-beta.1 pour le canal bêta)
 set -euo pipefail
 V="${1:?Usage : scripts/set-version.sh X.Y.Z}"

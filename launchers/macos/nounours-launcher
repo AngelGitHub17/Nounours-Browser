@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-# Exécutable principal de « Nounours Browser.app » : prépare le profil puis devient le navigateur (exec).
+# Exécutable principal de « NounoursBrowser.app » : prépare le profil puis devient le navigateur (exec).
 exec "$(cd "$(dirname "$0")/../Resources/nounours" && pwd)/nounours-browser.sh" "$@"

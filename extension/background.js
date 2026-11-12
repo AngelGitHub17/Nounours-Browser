@@ -1,4 +1,4 @@
-// Nounours Browser — arrière-plan (page événementielle, ne reste pas en RAM)
+// NounoursBrowser — arrière-plan (page événementielle, ne reste pas en RAM)
 // Rôles : thème, mise en veille des onglets, menus, raccourcis, premier démarrage.
 
 const TICK = "nb-tick";
@@ -9,7 +9,15 @@ browser.runtime.onInstalled.addListener(async ({ reason }) => {
   if (reason === "install") {
     const s = await nbGetSettings();
     if (!s.onboarded) {
-      browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") });
+      // Ouvre le démarrage rapide dans l'onglet d'accueil déjà affiché (une seule page chargée au lieu de deux)
+      const url = browser.runtime.getURL("onboarding/index.html");
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      const home = browser.runtime.getURL("newtab/index.html");
+      if (tab && (!tab.url || tab.url === home || /^about:(blank|home|newtab)/.test(tab.url))) {
+        await browser.tabs.update(tab.id, { url });
+      } else {
+        await browser.tabs.create({ url });
+      }
     }
   }
 });

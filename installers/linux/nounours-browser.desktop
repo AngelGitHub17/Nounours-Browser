@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Nounours Browser
+Name=NounoursBrowser
 GenericName=Navigateur web
 Comment=Navigateur léger NounoursCorp, compatible avec les extensions Firefox
 Exec=nounours-browser %u

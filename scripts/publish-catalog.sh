@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Inscrit une release GitHub de Nounours Browser dans le catalogue NounoursLauncher.
+# Inscrit une release GitHub de NounoursBrowser dans le catalogue NounoursLauncher.
 # Variables : GH_TOKEN, GITHUB_REPOSITORY, TAG, NL_API_URL, NL_CI_TOKEN, NL_SLUG, NOTES (facultatif)
 # Le dépôt étant privé, le serveur du catalogue donne aux utilisateurs un lien relais
 # (api.php?r=asset&id=…) : son jeton GitHub doit avoir accès en lecture à ce dépôt.
@@ -21,7 +21,7 @@ add() { # add <plateforme> <type> <fichier> [arguments d'installation] [chemin �
 # Le launcher choisit le meilleur fichier : Windows installer > zip, macOS dmg > zip, Linux AppImage > zip > deb.
 # Avec des arguments silencieux, l'installeur Windows se met aussi à jour automatiquement.
 WIN_ARGS='/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-'
-WIN_LAUNCH='%LOCALAPPDATA%\Programs\Nounours Browser\NounoursBrowser.exe'
+WIN_LAUNCH='%LOCALAPPDATA%\Programs\NounoursBrowser\NounoursBrowser.exe'
 for f in *; do
   case "$f" in
     *-win-x64-setup.exe) add windows-x86_64 installer "$f" "$WIN_ARGS" "$WIN_LAUNCH" ;;

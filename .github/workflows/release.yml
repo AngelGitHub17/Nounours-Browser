@@ -1,4 +1,4 @@
-# Publie automatiquement une version de Nounours Browser.
+# Publie automatiquement une version de NounoursBrowser.
 #
 # Déclencheurs :
 #   - push sur main : publie si la version d'extension/manifest.json n'a pas encore de release ;
@@ -6,7 +6,7 @@
 #     est montée d'un cran (X.Y.Z → X.Y.Z+1), le moteur mis à jour, et la release publiée ;
 #   - à la main (Actions → Release → Run workflow).
 #
-# Étapes : moteur Firefox ESR officiel (version figée dans engine/ESR_VERSION) rebrandé « Nounours Browser »
+# Étapes : moteur Firefox ESR officiel (version figée dans engine/ESR_VERSION) rebrandé « NounoursBrowser »
 #   Linux   : AppImage, .deb, zip             (ubuntu)
 #   Windows : setup.exe, zip                  (ubuntu prépare le moteur, windows compile et emballe)
 #   macOS   : .dmg, zip                       (macos)
@@ -154,8 +154,8 @@ jobs:
             $p = Join-Path $eng $exe
             if (Test-Path $p) {
               .\rcedit.exe $p --set-icon branding\logo.ico `
-                --set-version-string FileDescription "Nounours Browser" `
-                --set-version-string ProductName "Nounours Browser" `
+                --set-version-string FileDescription "NounoursBrowser" `
+                --set-version-string ProductName "NounoursBrowser" `
                 --set-version-string CompanyName "NounoursCorp" `
                 --set-version-string LegalCopyright "NounoursCorp - base sur Firefox ESR (Mozilla, MPL 2.0)"
               if ($LASTEXITCODE -ne 0) { throw "rcedit a échoué sur $exe" }
@@ -202,7 +202,7 @@ jobs:
         with:
           name: app
           path: build
-      - name: Nounours Browser.app (moteur rebrandé, re-signé), .dmg et zip
+      - name: NounoursBrowser.app (moteur rebrandé, re-signé), .dmg et zip
         run: |
           tar -xf build/app.tar -C build
           curl -fsSL -o ff.dmg "https://archive.mozilla.org/pub/firefox/releases/$ESR/mac/fr/Firefox%20$ESR.dmg"
@@ -239,7 +239,7 @@ jobs:
           scripts/changelog-section.sh "$V" > notes.md
           [ -s notes.md ] || echo "Version $V" > notes.md
           pre=""; case "$V" in *-*) pre="--prerelease" ;; esac
-          gh release create "v$V" dl/* --title "Nounours Browser $V" --notes-file notes.md --target "${{ needs.check.outputs.ref }}" $pre
+          gh release create "v$V" dl/* --title "NounoursBrowser $V" --notes-file notes.md --target "${{ needs.check.outputs.ref }}" $pre
       - name: Inscrire dans le catalogue NounoursLauncher
         env:
           GH_TOKEN: ${{ github.token }}

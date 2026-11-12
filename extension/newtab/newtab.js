@@ -96,6 +96,8 @@ browser.storage.onChanged.addListener(async (ch, area) => {
 (async () => {
   S = await nbGetSettings();
   render();
-  setInterval(tick, 1000);
+  // L'horloge n'affiche pas les secondes : une mise à jour par minute suffit (alignée sur la minute)
+  setTimeout(() => { tick(); setInterval(tick, 60000); }, 60000 - (Date.now() % 60000) + 50);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 })();

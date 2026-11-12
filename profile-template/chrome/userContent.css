@@ -1,6 +1,6 @@
-/* Nounours Browser — retouches des pages internes */
+/* NounoursBrowser — retouches des pages internes */
 @-moz-document url-prefix("about:preferences"), url-prefix("about:settings") {
-  /* « Votre navigateur est géré par votre organisation » : ce sont juste les réglages de Nounours Browser */
+  /* « Votre navigateur est géré par votre organisation » : ce sont juste les réglages de NounoursBrowser */
   #policies-container, #policies-container-content { display: none !important; }
   #category-more-from-mozilla, #category-experimental { display: none !important; }
 }

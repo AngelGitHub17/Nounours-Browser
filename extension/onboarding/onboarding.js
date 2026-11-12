@@ -140,8 +140,8 @@ async function finish() {
 function cycleHello() {
   let i = 0;
   const el = $("#hello-word");
-  setInterval(() => {
-    if (step !== 0) return;
+  const timer = setInterval(() => {
+    if (step !== 0) { clearInterval(timer); return; }  // plus d'animation une fois l'accueil passé
     el.classList.add("fade");
     setTimeout(() => { i = (i + 1) % HELLO.length; el.textContent = HELLO[i]; el.classList.remove("fade"); }, 500);
   }, 2400);

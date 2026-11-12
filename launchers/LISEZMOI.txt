@@ -1,14 +1,14 @@
-Nounours Browser — NounoursCorp
+NounoursBrowser — NounoursCorp
 ================================
 
-Le plus simple : installez et mettez à jour Nounours Browser depuis NounoursLauncher.
+Le plus simple : installez et mettez à jour NounoursBrowser depuis NounoursLauncher.
 
 Lancement manuel :
   Windows : NounoursBrowser.exe
-  macOS   : Nounours Browser.app
+  macOS   : NounoursBrowser.app
   Linux   : ./nounours-browser
 
-Nounours Browser est basé sur Firefox ESR (Mozilla), livré avec l'appli.
+NounoursBrowser est basé sur Firefox ESR (Mozilla), livré avec l'appli.
 Votre profil (marque-pages, extensions, réglages) est rangé à part et n'est jamais
 effacé par une mise à jour :
   Windows : %LOCALAPPDATA%\NounoursBrowser

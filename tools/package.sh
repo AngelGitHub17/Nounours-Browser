@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Construit les paquets Linux de Nounours Browser et prépare Windows / macOS.
+# Construit les paquets Linux de NounoursBrowser et prépare Windows / macOS.
 #
 # Usage : tools/package.sh [--linux-engine DIR] [--win-engine DIR] [--exe NounoursBrowser.exe]
 #   DIR = moteur Firefox ESR déjà rebrandé (tools/brand-engine.py)

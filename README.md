@@ -1,6 +1,6 @@
-<p align="center"><img src="branding/logo-512.png" width="160" alt="Logo Nounours Browser"></p>
+<p align="center"><img src="branding/logo-512.png" width="160" alt="Logo NounoursBrowser"></p>
 
-<h1 align="center">Nounours Browser</h1>
+<h1 align="center">NounoursBrowser</h1>
 
 <p align="center">Le navigateur de NounoursCorp : <b>léger en RAM</b>, <b>compatible avec toutes les extensions Firefox</b>, <b>personnalisable</b>, au <b>style macOS</b>.<br>Il s'installe et se met à jour tout seul depuis <b>NounoursLauncher</b>.</p>
 
@@ -10,17 +10,17 @@
 
 **Avec NounoursLauncher (recommandé)**
 1. Ouvrez NounoursLauncher.
-2. Dans *Applications*, choisissez **Nounours Browser**, puis cliquez sur **Installer**.
+2. Dans *Applications*, choisissez **NounoursBrowser**, puis cliquez sur **Installer**.
 3. Les mises à jour arrivent ensuite d'elles-mêmes, avec *Mettre à jour* ou *Tout mettre à jour*, ou en silence si la mise à jour automatique est activée.
 
-Au **premier lancement**, l'**assistant de démarrage** s'ouvre. On peut le revoir à tout moment : *Paramètres → Nounours Browser*, clic droit sur le bouton 🧸, menu *Outils*, ou l'engrenage du nouvel onglet.
+Au **premier lancement**, l'**assistant de démarrage** s'ouvre. On peut le revoir à tout moment : *Paramètres → NounoursBrowser*, clic droit sur le bouton 🧸, menu *Outils*, ou l'engrenage du nouvel onglet.
 
 **À la main**, depuis les *Releases* :
 
 | Système | Installeur | Portable |
 |---|---|---|
 | Windows | `NounoursBrowser-X.Y.Z-win-x64-setup.exe` (sans droits admin) | `…-win-x64.zip` → `NounoursBrowser.exe` |
-| macOS | `NounoursBrowser-X.Y.Z-mac-universal.dmg` → glisser dans Applications | `…-mac-universal.zip` → `Nounours Browser.app` |
+| macOS | `NounoursBrowser-X.Y.Z-mac-universal.dmg` → glisser dans Applications | `…-mac-universal.zip` → `NounoursBrowser.app` |
 | Linux | `NounoursBrowser-X.Y.Z-x86_64.AppImage` ou `nounours-browser_X.Y.Z_amd64.deb` | `…-linux-x64.zip` → `./nounours-browser` |
 
 ### Où sont mes données ?
@@ -47,13 +47,13 @@ Ce dossier contient aussi deux fichiers que vous pouvez modifier :
 
 ## Le moteur : Firefox ESR, rebrandé
 
-- **Compatibilité :** les extensions Firefox ne fonctionnent qu'avec le moteur **Gecko**. Nounours Browser utilise le Firefox **ESR** officiel de Mozilla : sa version est figée dans `engine/ESR_VERSION` et téléchargée depuis archive.mozilla.org au moment du build.
-- **Rebranding** (`tools/brand-engine.py`) : seuls les textes et images de marque sont remplacés, le code n'est pas recompilé. On obtient « Nounours Browser » dans les titres, les menus, les Paramètres et « À propos », avec les logos, les icônes de fenêtre et les tuiles Windows. Sur Windows, l'icône et la description de `firefox.exe` sont aussi changées (`rcedit`). Sur macOS, l'appli s'appelle « Nounours Browser » et elle est re-signée ad hoc.
-- **Ajouts au moteur** (`engine-overlay/`) : un script autoconfig ajoute la section « Nounours Browser » aux Paramètres.
-- **Mises à jour :** les mises à jour internes de Mozilla sont désactivées, car elles annuleraient le rebranding. À la place, la CI vérifie chaque jour la sortie d'un nouveau Firefox ESR et publie alors automatiquement une nouvelle version de Nounours Browser. NounoursLauncher l'installe ensuite.
-- **Honnêteté :** « À propos » indique que Nounours Browser est basé sur Firefox ESR (licence MPL 2.0).
+- **Compatibilité :** les extensions Firefox ne fonctionnent qu'avec le moteur **Gecko**. NounoursBrowser utilise le Firefox **ESR** officiel de Mozilla : sa version est figée dans `engine/ESR_VERSION` et téléchargée depuis archive.mozilla.org au moment du build.
+- **Rebranding** (`tools/brand-engine.py`) : seuls les textes et images de marque sont remplacés, le code n'est pas recompilé. On obtient « NounoursBrowser » dans les titres, les menus, les Paramètres et « À propos », avec les logos, les icônes de fenêtre et les tuiles Windows. Sur Windows, l'icône et la description de `firefox.exe` sont aussi changées (`rcedit`). Sur macOS, l'appli s'appelle « NounoursBrowser » et elle est re-signée ad hoc.
+- **Ajouts au moteur** (`engine-overlay/`) : un script autoconfig ajoute la section « NounoursBrowser » aux Paramètres.
+- **Mises à jour :** les mises à jour internes de Mozilla sont désactivées, car elles annuleraient le rebranding. À la place, la CI vérifie chaque jour la sortie d'un nouveau Firefox ESR et publie alors automatiquement une nouvelle version de NounoursBrowser. NounoursLauncher l'installe ensuite.
+- **Honnêteté :** « À propos » indique que NounoursBrowser est basé sur Firefox ESR (licence MPL 2.0).
 
-## Ce qu'apporte Nounours Browser
+## Ce qu'apporte NounoursBrowser
 
 | Couche | Fichier(s) | Rôle |
 |---|---|---|
@@ -80,7 +80,7 @@ git commit -am "v1.1.0" && git push
 GitHub Actions (`.github/workflows/release.yml`) fait ensuite le reste :
 1. il vérifie l'extension (`web-ext lint`), télécharge le Firefox ESR figé pour Linux, Windows et macOS, puis le rebrande ;
 2. Linux : il construit l'AppImage, le .deb et le zip ;
-3. Windows : il compile `NounoursBrowser.exe`, puis le zip et le `setup.exe` (Inno Setup) ; macOS : il construit `Nounours Browser.app`, le `.dmg` et le zip ;
+3. Windows : il compile `NounoursBrowser.exe`, puis le zip et le `setup.exe` (Inno Setup) ; macOS : il construit `NounoursBrowser.app`, le `.dmg` et le zip ;
 4. il crée la release `v1.1.0` avec les notes du CHANGELOG ;
 5. il l'**inscrit dans le catalogue NounoursLauncher**, qui propose alors la mise à jour aux utilisateurs.
 
@@ -125,7 +125,7 @@ Les pages `extension/*/index.html` s'ouvrent aussi directement dans un navigateu
 branding/           logo (SVG, PNG 512/1024, ICO, ICNS) — NounoursCorp × Web
 extension/          extension compagnon (manifest, background, onboarding, newtab, popup, settings, shared)
 engine/             ESR_VERSION (version de Firefox ESR utilisée)
-engine-overlay/     ajouts au moteur (autoconfig : section « Nounours Browser » des Paramètres)
+engine-overlay/     ajouts au moteur (autoconfig : section « NounoursBrowser » des Paramètres)
 launchers/          windows/NounoursBrowser.cs · macos/nounours-launcher · unix/nounours-browser(.sh)
 installers/         windows/NounoursBrowser.iss (Inno Setup) · macos/build-app.sh · linux/nounours-browser.desktop
 profile-template/   user.js, user-eco.js, user-overrides.js, chrome/userChrome.css
@@ -137,9 +137,9 @@ tools/              brand-engine.py (rebranding du moteur), build-xpi.sh, packag
 
 ## Limites connues
 
-- Windows : pour épingler Nounours Browser à la barre des tâches, utilisez le raccourci du menu Démarrer (*clic droit → Épingler*). Épingler la fenêtre ouverte pointerait vers le moteur sans passer par le lanceur.
+- Windows : pour épingler NounoursBrowser à la barre des tâches, utilisez le raccourci du menu Démarrer (*clic droit → Épingler*). Épingler la fenêtre ouverte pointerait vers le moteur sans passer par le lanceur.
 - macOS : l'appli est signée « ad hoc » (sans compte Apple Developer). Installée par NounoursLauncher ou depuis le .dmg, elle s'ouvre normalement ; téléchargée à la main depuis un navigateur, il faut la première fois faire *clic droit → Ouvrir*.
 
 - `userChrome.css` dépend de la structure interne de Firefox. Une mise à jour majeure d'ESR, environ une fois par an, peut décaler un détail visuel. Les couleurs passent par l'API officielle des thèmes et ne cassent pas.
-- Les applis ne sont pas signées par Apple ni Microsoft. Comme pour le launcher, l'avertissement de Windows ou de macOS peut s'afficher en lançant l'archive à la main. Il ne s'affiche pas quand Nounours Browser est installé par NounoursLauncher.
-- La marque Firefox est protégée. Le moteur reste un Firefox ESR officiel, non modifié ; Nounours Browser n'est qu'une couche par-dessus.
+- Les applis ne sont pas signées par Apple ni Microsoft. Comme pour le launcher, l'avertissement de Windows ou de macOS peut s'afficher en lançant l'archive à la main. Il ne s'affiche pas quand NounoursBrowser est installé par NounoursLauncher.
+- La marque Firefox est protégée. Le moteur reste un Firefox ESR officiel, non modifié ; NounoursBrowser n'est qu'une couche par-dessus.

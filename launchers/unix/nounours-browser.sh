@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Nounours Browser — cœur du lanceur macOS / Linux
+# NounoursBrowser — cœur du lanceur macOS / Linux
 #
-# Le moteur (Firefox ESR rebrandé « Nounours Browser ») est livré avec l'appli :
-#   macOS : Nounours Browser.app/Contents/MacOS/firefox   (ce script : Contents/Resources/nounours/)
+# Le moteur (Firefox ESR rebrandé « NounoursBrowser ») est livré avec l'appli :
+#   macOS : NounoursBrowser.app/Contents/MacOS/firefox   (ce script : Contents/Resources/nounours/)
 #   Linux : <dossier>/engine/firefox                      (ce script : <dossier>/app/)
 # Le profil vit dans le dossier de données : il survit aux mises à jour de NounoursLauncher.
 #
@@ -28,9 +28,9 @@ mkdir -p "$DATA_DIR"
 
 fail() {
   if [ "$OS" = "Darwin" ]; then
-    osascript -e "display dialog \"$1\" with title \"Nounours Browser\" buttons {\"OK\"} with icon stop" >/dev/null 2>&1 || true
+    osascript -e "display dialog \"$1\" with title \"NounoursBrowser\" buttons {\"OK\"} with icon stop" >/dev/null 2>&1 || true
   elif command -v zenity >/dev/null; then
-    zenity --error --title="Nounours Browser" --text="$1" 2>/dev/null || true
+    zenity --error --title="NounoursBrowser" --text="$1" 2>/dev/null || true
   fi
   echo "Erreur : $1" >&2
   exit 1
@@ -62,10 +62,18 @@ done
 MODE="$(cat "$DATA_DIR/mode.txt" 2>/dev/null || echo balanced)"
 
 if [ -n "${NB_FIREFOX:-}" ] && [ -x "$NB_FIREFOX" ]; then FIREFOX="$NB_FIREFOX"; fi
-[ -x "$FIREFOX" ] || fail "Moteur introuvable. Réinstallez Nounours Browser depuis NounoursLauncher."
+[ -x "$FIREFOX" ] || fail "Moteur introuvable. Réinstallez NounoursBrowser depuis NounoursLauncher."
 
 # Anciennes versions (1.0.x) : moteur téléchargé dans le dossier de données → inutile désormais
 rm -rf "$DATA_DIR/engine" 2>/dev/null || true
+# macOS : l'appli s'appelait « Nounours Browser.app » (avec espace) jusqu'en 1.1 → on retire l'ancienne copie
+if [ "$OS" = "Darwin" ]; then
+  for old in "$HOME/Applications/Nounours Browser.app" "/Applications/Nounours Browser.app"; do
+    if [ -d "$old" ] && [ "$(defaults read "$old/Contents/Info" CFBundleIdentifier 2>/dev/null)" = "fr.nounourscorp.browser" ]; then
+      rm -rf "$old" 2>/dev/null || true
+    fi
+  done
+fi
 
 # ---------------------------------------------------------------- profil
 TPL="$APP_DIR/profile-template"

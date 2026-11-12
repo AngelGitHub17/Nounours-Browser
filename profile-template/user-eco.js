@@ -13,3 +13,10 @@ user_pref("image.mem.surfacecache.max_size_kb", 131072);
 user_pref("browser.sessionstore.max_tabs_undo", 5);
 user_pref("browser.sessionhistory.max_entries", 20);
 user_pref("javascript.options.mem.high_water_mark", 64);
+// Moins de processus auxiliaires : réseau, décodage média et audio rejoignent le processus principal
+user_pref("network.process.enabled", false);
+user_pref("media.rdd-process.enabled", false);
+user_pref("media.utility-process.enabled", false);
+// Windows : pas de processus graphique séparé (gain de mémoire ; un plantage du pilote graphique
+// ferme alors tout le navigateur au lieu d'être rattrapé)
+user_pref("layers.gpu-process.enabled", false);

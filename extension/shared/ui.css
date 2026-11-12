@@ -2,7 +2,7 @@
 :root {
   --accent: #007AFF;
   --bg: #F5F5F7;
-  --surface: rgba(255, 255, 255, .72);
+  --surface: rgba(250, 250, 252, .9);
   --surface-solid: #FFFFFF;
   --surface-2: rgba(0, 0, 0, .04);
   --text: #1D1D1F;
@@ -16,7 +16,7 @@
 }
 :root[data-scheme="dark"] {
   --bg: #1C1C1E;
-  --surface: rgba(40, 40, 42, .72);
+  --surface: rgba(36, 36, 39, .9);
   --surface-solid: #2C2C2E;
   --surface-2: rgba(255, 255, 255, .06);
   --text: #F5F5F7;
@@ -39,9 +39,10 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .muted { color: var(--muted); }
 
+/* Pas de backdrop-filter : un flou d'arrière-plan oblige le moteur à garder des copies de l'écran
+   en mémoire graphique. Un fond presque opaque donne le même rendu, bien plus léger. */
 .glass {
   background: var(--surface);
-  backdrop-filter: blur(30px) saturate(1.6);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }

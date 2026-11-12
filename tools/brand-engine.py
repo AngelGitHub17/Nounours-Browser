@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Rebrande un moteur Firefox ESR officiel en « Nounours Browser ».
+Rebrande un moteur Firefox ESR officiel en « NounoursBrowser ».
 
 Usage : tools/brand-engine.py <dossier-moteur> <linux|windows|macos>
   linux / windows : <dossier-moteur> contient firefox(.exe), browser/omni.ja …
@@ -10,8 +10,8 @@ Ce qui change (le code du moteur n'est pas modifié) :
   - noms affichés : titres de fenêtre, menus, « À propos », paramètres…  (brand.ftl / brand.properties)
   - logos et icônes (À propos, onglets internes, icônes de fenêtre)
   - politiques : mises à jour Mozilla désactivées (le moteur est mis à jour par les releases
-    Nounours Browser, qui réappliquent ce rebranding), télémétrie coupée…
-Nounours Browser reste honnête sur son origine : la mention légale indique qu'il est basé sur Firefox.
+    NounoursBrowser, qui réappliquent ce rebranding), télémétrie coupée…
+NounoursBrowser reste honnête sur son origine : la mention légale indique qu'il est basé sur Firefox.
 """
 import glob
 import os
@@ -24,11 +24,11 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRANDING = os.path.join(ROOT, "branding")
-NAME = "Nounours Browser"
+NAME = "NounoursBrowser"
 VENDOR = "NounoursCorp"
 
-FTL = f"""# Nounours Browser — marque (remplace la marque Firefox)
--brand-shorter-name = Nounours
+FTL = f"""# NounoursBrowser — marque (remplace la marque Firefox)
+-brand-shorter-name = NounoursBrowser
 -brand-short-name = {NAME}
 -brand-shortcut-name = {NAME}
 -brand-full-name = {NAME}
@@ -36,7 +36,7 @@ FTL = f"""# Nounours Browser — marque (remplace la marque Firefox)
 -vendor-short-name = {VENDOR}
 trademarkInfo = {NAME} est basé sur Firefox ESR. Firefox et les logos Firefox sont des marques déposées de la Fondation Mozilla.
 """
-FTL_EN = f"""-brand-shorter-name = Nounours
+FTL_EN = f"""-brand-shorter-name = NounoursBrowser
 -brand-short-name = {NAME}
 -brand-shortcut-name = {NAME}
 -brand-full-name = {NAME}
@@ -44,14 +44,14 @@ FTL_EN = f"""-brand-shorter-name = Nounours
 -vendor-short-name = {VENDOR}
 trademarkInfo = {NAME} is based on Firefox ESR. Firefox and the Firefox logos are trademarks of the Mozilla Foundation.
 """
-PROPERTIES = f"""brandShorterName=Nounours
+PROPERTIES = f"""brandShorterName=NounoursBrowser
 brandShortName={NAME}
 brandFullName={NAME}
 vendorShortName={VENDOR}
 """
-WORDMARK = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 80">
+WORDMARK = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 80">
   <text x="0" y="58" fill="context-fill" font-family="-apple-system, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Cantarell, sans-serif"
-        font-size="56" font-weight="700" letter-spacing="-1">Nounours Browser</text>
+        font-size="56" font-weight="700" letter-spacing="-1">NounoursBrowser</text>
 </svg>
 """
 
@@ -81,7 +81,7 @@ def patch_gre_omni(omni):
 
 
 def install_overlay(dest):
-    """Fichiers ajoutés au moteur : autoconfig (section « Nounours Browser » des Paramètres)."""
+    """Fichiers ajoutés au moteur : autoconfig (section « NounoursBrowser » des Paramètres)."""
     src = os.path.join(ROOT, "engine-overlay")
     for base, _dirs, files in os.walk(src):
         rel = os.path.relpath(base, src)

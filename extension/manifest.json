@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Nounours Browser",
+  "name": "NounoursBrowser",
   "short_name": "Nounours",
-  "version": "1.1.0",
-  "description": "Compagnon de Nounours Browser : démarrage rapide, thèmes façon macOS, mise en veille des onglets pour économiser la RAM.",
+  "version": "1.2.0",
+  "description": "Compagnon de NounoursBrowser : démarrage rapide, thèmes façon macOS, mise en veille des onglets pour économiser la RAM.",
   "author": "DidiKaria — NounoursCorp",
   "homepage_url": "https://didikaria.fr",
   "icons": {
@@ -63,5 +63,5 @@
       "description": "Basculer clair / sombre"
     }
   },
-  "version_name": "1.1.0"
+  "version_name": "1.2.0"
 }

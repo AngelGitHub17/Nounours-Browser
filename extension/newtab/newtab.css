@@ -43,7 +43,7 @@ body.plain main { color: var(--text); text-shadow: none; }
 .corner:hover { opacity: 1; }
 
 dialog { border: 0; color: var(--text); padding: 20px; width: min(460px, 90vw); }
-dialog::backdrop { background: rgba(0,0,0,.25); backdrop-filter: blur(4px); }
+dialog::backdrop { background: rgba(0,0,0,.35); }
 dialog h3 { margin-bottom: 4px; }
 dialog textarea { width: 100%; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; resize: vertical; }
 dialog .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
