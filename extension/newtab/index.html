@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nouvel onglet</title>
+  <link rel="icon" href="../icons/icon.svg">
   <link rel="stylesheet" href="../shared/ui.css">
   <link rel="stylesheet" href="newtab.css">
 </head>
@@ -24,7 +25,12 @@
   </main>
 
   <button class="corner glass" id="edit" title="Modifier les raccourcis">✎</button>
-  <button class="corner glass right" id="prefs" title="Réglages Nounours">⚙︎</button>
+  <button class="corner glass right" id="prefs" title="Réglages" aria-haspopup="menu">⚙︎</button>
+  <div class="menu glass" id="prefs-menu" role="menu" hidden>
+    <button role="menuitem" id="m-settings">Réglages Nounours</button>
+    <button role="menuitem" id="m-tour">Revoir le démarrage rapide</button>
+    <button role="menuitem" id="m-edit">Modifier les raccourcis</button>
+  </div>
 
   <dialog id="editor" class="glass">
     <form method="dialog">

@@ -1,5 +1,13 @@
 # Journal des versions
 
+## 1.1.0 — 2026-11-12
+
+- **Nounours Browser partout** : titres de fenêtre, menus, Paramètres, « À propos », icônes de fenêtre et de la barre des tâches. Le moteur Firefox ESR est désormais rebrandé et livré directement dans les installeurs (plus de téléchargement au premier lancement).
+- **Interface façon Safari / macOS** : fenêtre unifiée, onglets de largeur égale avec titre centré, barre d'adresse centrée en creux, menus à surbrillance colorée, feux tricolores sur Windows et Linux.
+- **Section « Nounours Browser » dans les Paramètres**, avec « Revoir le démarrage rapide » et « Réglages Nounours ». Le démarrage rapide est aussi accessible depuis le bouton 🧸 (clic droit), le Centre de contrôle, le menu Outils et l'engrenage du nouvel onglet.
+- Plus de mascotte Firefox, de « Firefox Labs », de compte Mozilla, de bannière « géré par votre organisation » ni d'écran de conditions d'utilisation de Mozilla.
+- Le bouton 🧸 est épinglé dans la barre d'outils ; les pages Nounours n'affichent plus leur adresse technique.
+- Mises à jour de sécurité : chaque nouveau Firefox ESR publié par Mozilla donne automatiquement une nouvelle version de Nounours Browser.
 ## 1.0.1 — 2026-11-12
 
 - **Installeurs** : setup.exe pour Windows (sans droits admin, raccourcis Démarrer et Bureau, désinstallation propre), .dmg pour macOS, AppImage et .deb pour Linux. Les zips portables restent disponibles.

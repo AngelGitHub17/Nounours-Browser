@@ -121,9 +121,20 @@ async function setupMenus() {
   browser.menus.create({ id: "nb-sleep-others", title: "Mettre en veille les autres onglets", contexts: ["tab"] });
   browser.menus.create({ id: "nb-sep", type: "separator", contexts: ["tab"] });
   browser.menus.create({ id: "nb-never", title: "Ne jamais mettre ce site en veille", contexts: ["tab"] });
+  // Clic droit sur le bouton 🧸 et menu Outils
+  for (const ctx of ["action", "tools_menu"]) {
+    browser.menus.create({ id: `nb-onboarding-${ctx}`, title: "Revoir le démarrage rapide", contexts: [ctx] });
+    browser.menus.create({ id: `nb-settings-${ctx}`, title: "Réglages Nounours", contexts: [ctx] });
+  }
+}
+
+function openOnboarding() {
+  return browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") });
 }
 
 browser.menus.onClicked.addListener(async (info, tab) => {
+  if (String(info.menuItemId).startsWith("nb-onboarding-")) return openOnboarding();
+  if (String(info.menuItemId).startsWith("nb-settings-")) return browser.runtime.openOptionsPage();
   const s = await nbGetSettings();
   if (info.menuItemId === "nb-sleep") {
     if (tab.active) {

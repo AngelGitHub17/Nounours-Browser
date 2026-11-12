@@ -47,3 +47,15 @@ dialog::backdrop { background: rgba(0,0,0,.25); backdrop-filter: blur(4px); }
 dialog h3 { margin-bottom: 4px; }
 dialog textarea { width: 100%; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; resize: vertical; }
 dialog .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+.menu {
+  position: fixed; right: 18px; bottom: 62px; min-width: 230px; padding: 5px; border-radius: 12px;
+  display: flex; flex-direction: column; text-shadow: none; animation: menu-in .14s ease-out;
+}
+.menu[hidden] { display: none; }
+.menu button {
+  appearance: none; border: 0; background: none; color: var(--text); text-align: left;
+  font: 13px var(--font); padding: 7px 12px; border-radius: 7px; cursor: pointer;
+}
+.menu button:hover { background: var(--accent); color: #fff; }
+@keyframes menu-in { from { opacity: 0; transform: translateY(6px) scale(.98); } }

@@ -12,31 +12,32 @@ const NB_ACCENTS = {
 };
 
 // Chaque préréglage : couleurs de base claires et sombres.
+// Chaque préréglage : fenêtre unifiée (frame = toolbar), onglet actif « surélevé », champ d'adresse en creux.
 const NB_PRESETS = {
   aqua: {
     label: "Aqua", hint: "Inspiré de macOS",
-    light: { frame: "#E6E6E9", frameInactive: "#F1F1F3", toolbar: "#F7F7F8", text: "#1D1D1F", field: "#FFFFFF", popup: "#FFFFFF" },
-    dark:  { frame: "#1C1C1E", frameInactive: "#262628", toolbar: "#2A2A2D", text: "#F5F5F7", field: "#3A3A3D", popup: "#2C2C2E" }
+    light: { toolbar: "#F2F2F4", tab: "#FFFFFF", text: "#1D1D1F", field: "#E3E3E7", fieldFocus: "#FFFFFF", popup: "#F7F7F8" },
+    dark:  { toolbar: "#2A2A2D", tab: "#434347", text: "#F5F5F7", field: "#3A3A3E", fieldFocus: "#1F1F22", popup: "#2C2C2F" }
   },
   graphite: {
     label: "Graphite", hint: "Neutre et sobre",
-    light: { frame: "#DCDCDE", frameInactive: "#E8E8EA", toolbar: "#EFEFF1", text: "#202022", field: "#FAFAFB", popup: "#FAFAFB" },
-    dark:  { frame: "#141416", frameInactive: "#1D1D1F", toolbar: "#232326", text: "#E8E8EA", field: "#323236", popup: "#232326" }
+    light: { toolbar: "#E9E9EB", tab: "#F8F8F9", text: "#202022", field: "#DADADD", fieldFocus: "#FFFFFF", popup: "#F4F4F5" },
+    dark:  { toolbar: "#1E1E20", tab: "#38383B", text: "#E8E8EA", field: "#2E2E31", fieldFocus: "#161618", popup: "#252527" }
   },
   mica: {
     label: "Mica", hint: "Esprit Windows 11",
-    light: { frame: "#EDF0F5", frameInactive: "#F4F6F9", toolbar: "#F9FAFC", text: "#1B1B1F", field: "#FFFFFF", popup: "#FFFFFF" },
-    dark:  { frame: "#1F1F1F", frameInactive: "#262626", toolbar: "#2B2B2B", text: "#F3F3F3", field: "#383838", popup: "#2C2C2C" }
+    light: { toolbar: "#F3F5F9", tab: "#FFFFFF", text: "#1B1B1F", field: "#E6E9EF", fieldFocus: "#FFFFFF", popup: "#F9FAFC" },
+    dark:  { toolbar: "#202020", tab: "#3A3A3A", text: "#F3F3F3", field: "#2D2D2D", fieldFocus: "#191919", popup: "#2B2B2B" }
   },
   nord: {
     label: "Nord", hint: "Bleus polaires",
-    light: { frame: "#E5E9F0", frameInactive: "#ECEFF4", toolbar: "#F0F3F7", text: "#2E3440", field: "#FFFFFF", popup: "#FFFFFF" },
-    dark:  { frame: "#2E3440", frameInactive: "#353C4A", toolbar: "#3B4252", text: "#ECEFF4", field: "#434C5E", popup: "#3B4252" }
+    light: { toolbar: "#E8ECF2", tab: "#F7F9FB", text: "#2E3440", field: "#D8DEE9", fieldFocus: "#FFFFFF", popup: "#F0F3F7" },
+    dark:  { toolbar: "#2E3440", tab: "#4C566A", text: "#ECEFF4", field: "#3B4252", fieldFocus: "#272C36", popup: "#3B4252" }
   },
   sakura: {
     label: "Sakura", hint: "Doux et rosé",
-    light: { frame: "#F5E4EA", frameInactive: "#F9EDF1", toolbar: "#FDF5F8", text: "#3D2A33", field: "#FFFFFF", popup: "#FFFFFF" },
-    dark:  { frame: "#261C21", frameInactive: "#2E2228", toolbar: "#35282F", text: "#F6E9EE", field: "#45353D", popup: "#35282F" }
+    light: { toolbar: "#F8EBF0", tab: "#FFFAFC", text: "#3D2A33", field: "#EED8E1", fieldFocus: "#FFFFFF", popup: "#FDF5F8" },
+    dark:  { toolbar: "#2A1F24", tab: "#4A3841", text: "#F6E9EE", field: "#3A2C33", fieldFocus: "#21181C", popup: "#35282F" }
   }
 };
 
@@ -67,11 +68,11 @@ function nbBuildTheme(s) {
   const active = dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.12)";
   return {
     colors: {
-      frame: p.frame,
-      frame_inactive: p.frameInactive,
+      frame: p.toolbar,
+      frame_inactive: p.toolbar,
       tab_background_text: p.text,
       tab_text: p.text,
-      tab_selected: p.toolbar,
+      tab_selected: p.tab,
       tab_line: "transparent",
       tab_loading: accent,
       toolbar: p.toolbar,
@@ -82,7 +83,7 @@ function nbBuildTheme(s) {
       toolbar_field: p.field,
       toolbar_field_text: p.text,
       toolbar_field_border: "transparent",
-      toolbar_field_focus: p.field,
+      toolbar_field_focus: p.fieldFocus,
       toolbar_field_text_focus: p.text,
       toolbar_field_border_focus: accent,
       toolbar_field_highlight: nbAlpha(accent, 0.35),
@@ -101,7 +102,7 @@ function nbBuildTheme(s) {
       sidebar_border: sep,
       sidebar_highlight: accent,
       sidebar_highlight_text: "#FFFFFF",
-      ntp_background: p.frame,
+      ntp_background: p.toolbar,
       ntp_text: p.text
     },
     properties: {

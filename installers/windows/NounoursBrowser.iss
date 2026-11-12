@@ -36,6 +36,8 @@ UninstallDisplayIcon={app}\NounoursBrowser.exe
 UninstallDisplayName=Nounours Browser
 WizardStyle=modern
 Compression=lzma2/max
+LZMANumBlockThreads=4
+DiskSpanning=no
 SolidCompression=yes
 ; Le lanceur se ferme dès que le navigateur démarre : rien à fermer pendant une mise à jour
 CloseApplications=no
@@ -49,8 +51,11 @@ Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
 Name: "desktopicon"; Description: "Créer une icône sur le Bureau"; GroupDescription: "Raccourcis :"
 
 [InstallDelete]
-; Repart d'un contenu propre à chaque mise à jour (le profil, lui, est ailleurs et n'est jamais touché)
+; Repart d'un contenu propre à chaque mise à jour (le profil, lui, est ailleurs et n'est jamais touché).
+; Un moteur encore utilisé (navigateur ouvert pendant la mise à jour) ne peut pas être supprimé :
+; il est ignoré ici et nettoyé par NounoursBrowser.exe au lancement suivant.
 Type: filesandordirs; Name: "{app}\app"
+Type: filesandordirs; Name: "{app}\engine-*"
 
 [Files]
 Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
@@ -81,6 +86,7 @@ Filename: "{app}\NounoursBrowser.exe"; Description: "Lancer Nounours Browser"; F
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\app"
+Type: filesandordirs; Name: "{app}\engine-*"
 
 [Code]
 // À la désinstallation, propose de supprimer aussi le profil et le moteur

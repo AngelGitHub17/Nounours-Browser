@@ -70,7 +70,12 @@ $("#search").onsubmit = async (e) => {
   }
 };
 
-$("#prefs").onclick = () => browser.runtime.openOptionsPage();
+$("#prefs").onclick = (e) => { e.stopPropagation(); $("#prefs-menu").hidden = !$("#prefs-menu").hidden; };
+document.addEventListener("click", () => ($("#prefs-menu").hidden = true));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#prefs-menu").hidden = true; });
+$("#m-settings").onclick = () => browser.runtime.openOptionsPage();
+$("#m-tour").onclick = () => browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") });
+$("#m-edit").onclick = () => $("#edit").click();
 $("#edit").onclick = () => {
   $("#shortcuts").value = S.newtab.shortcuts.map((s) => `${s.title} | ${s.url}`).join("\n");
   $("#editor").showModal();

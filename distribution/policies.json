@@ -28,6 +28,9 @@
       "SponsoredSuggestions": false,
       "ImproveSuggest": false,
       "Locked": false
-    }
+    },
+    "DisableAppUpdate": true,
+    "AppAutoUpdate": false,
+    "DisableDefaultBrowserAgent": true
   }
 }

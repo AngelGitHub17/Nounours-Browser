@@ -34,6 +34,19 @@ user_pref("browser.startup.homepage_override.mstone", "ignore");
 user_pref("startup.homepage_welcome_url", "");
 user_pref("startup.homepage_welcome_url.additional", "");
 user_pref("browser.shell.checkDefaultBrowser", false);
+// Pas d'écran « Conditions d'utilisation / données » de Mozilla (aucune donnée n'est envoyée)
+user_pref("browser.preonboarding.enabled", false);
+user_pref("termsofuse.bypassNotification", true);
+user_pref("termsofuse.acceptedVersion", 999);
+user_pref("termsofuse.acceptedDate", "1735689600000");
+user_pref("datareporting.policy.dataSubmissionPolicyBypassNotification", true);
+user_pref("browser.profiles.enabled", false);
+// Paramètres : sans bannière « nouveau design », sans Firefox Labs ni « Plus de produits Mozilla »
+user_pref("browser.settings-redesign.promo.dismissed", true);
+user_pref("browser.preferences.experimental", false);
+user_pref("browser.preferences.moreFromMozilla", false);
+// Compte Mozilla / synchronisation masqués (réactivable dans user-overrides.js : identity.fxaccounts.enabled = true)
+user_pref("identity.fxaccounts.enabled", false);
 user_pref("browser.disableResetPrompt", true);
 
 // ---------- RAM : réglages principaux ----------
@@ -105,7 +118,7 @@ user_pref("browser.download.autohideButton", true);
 user_pref("browser.urlbar.trimURLs", true);
 user_pref("browser.tabs.warnOnClose", false);
 user_pref("general.smoothScroll", true);
-user_pref("browser.toolbars.bookmarks.visibility", "newtab");
+user_pref("browser.toolbars.bookmarks.visibility", "never");   // barre personnelle : Ctrl+Maj+B pour l'afficher
 // Onglets verticaux natifs (décommentez pour les activer)
 // user_pref("sidebar.revamp", true);
 // user_pref("sidebar.verticalTabs", true);

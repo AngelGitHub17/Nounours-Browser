@@ -1,15 +1,19 @@
 # Publie automatiquement une version de Nounours Browser.
 #
-# 1. scripts/set-version.sh X.Y.Z  +  section « ## X.Y.Z » dans CHANGELOG.md
-# 2. git commit + git push sur main
-# → si la release vX.Y.Z n'existe pas encore :
-#     Linux   : AppImage, .deb, zip portable          (ubuntu)
-#     Windows : NounoursBrowser.exe, setup.exe, zip   (windows)
-#     macOS   : .dmg, zip (.app)                      (macos)
-#   puis release GitHub + inscription dans le catalogue NounoursLauncher.
+# Déclencheurs :
+#   - push sur main : publie si la version d'extension/manifest.json n'a pas encore de release ;
+#   - chaque jour : si Mozilla a publié un nouveau Firefox ESR (correctifs de sécurité), la version
+#     est montée d'un cran (X.Y.Z → X.Y.Z+1), le moteur mis à jour, et la release publiée ;
+#   - à la main (Actions → Release → Run workflow).
+#
+# Étapes : moteur Firefox ESR officiel (version figée dans engine/ESR_VERSION) rebrandé « Nounours Browser »
+#   Linux   : AppImage, .deb, zip             (ubuntu)
+#   Windows : setup.exe, zip                  (ubuntu prépare le moteur, windows compile et emballe)
+#   macOS   : .dmg, zip                       (macos)
+#   → release GitHub + inscription dans le catalogue NounoursLauncher.
 #
 # Réglages du dépôt (Settings → Secrets and variables → Actions) :
-#   Secret   NL_CI_TOKEN : jeton CI du panel NounoursLauncher (⚙ Réglages → Générer un jeton CI)
+#   Secret   NL_CI_TOKEN : jeton CI du panel NounoursLauncher
 #   Variable NL_API_URL  : https://nounourscorp.fr/launcher/api.php (valeur par défaut)
 #   Variable NL_SLUG     : nounours-browser (valeur par défaut)
 
@@ -18,6 +22,8 @@ name: Release
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "17 5 * * *"
   workflow_dispatch:
 
 permissions:
@@ -33,14 +39,35 @@ jobs:
     outputs:
       version: ${{ steps.v.outputs.version }}
       build: ${{ steps.v.outputs.build }}
+      ref: ${{ steps.v.outputs.ref }}
+      esr: ${{ steps.v.outputs.esr }}
     steps:
       - uses: actions/checkout@v4
+      - name: Nouveau Firefox ESR ? (exécution quotidienne)
+        if: github.event_name == 'schedule'
+        run: |
+          latest=$(curl -fsSL https://product-details.mozilla.org/1.0/firefox_versions.json | jq -r .FIREFOX_ESR)
+          current=$(cat engine/ESR_VERSION)
+          echo "ESR actuel : $current — dernier : $latest"
+          if [ -n "$latest" ] && [ "$latest" != "null" ] && [ "$latest" != "$current" ]; then
+            v=$(jq -r '.version_name // .version' extension/manifest.json)
+            next=$(echo "$v" | awk -F. '{print $1"."$2"."$3+1}')
+            echo "$latest" > engine/ESR_VERSION
+            scripts/set-version.sh "$next"
+            scripts/changelog-add.py "$next" "Moteur mis à jour : Firefox ESR ${latest%esr} (correctifs de sécurité)."
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit -am "v$next : moteur Firefox ESR $latest"
+            git push
+          fi
       - id: v
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           v=$(jq -r '.version_name // .version' extension/manifest.json)
           echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "esr=$(cat engine/ESR_VERSION)" >> "$GITHUB_OUTPUT"
           if gh release view "v$v" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "build=false" >> "$GITHUB_OUTPUT"; echo "v$v existe déjà : rien à publier."
           else
@@ -51,8 +78,12 @@ jobs:
     needs: check
     if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
+    env:
+      ESR: ${{ needs.check.outputs.esr }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check.outputs.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -60,39 +91,78 @@ jobs:
         run: npx -y web-ext lint --source-dir extension --self-hosted
       - name: Outils
         run: |
-          curl -fsSL -o /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x /usr/local/bin/appimagetool
-      - name: Construire (AppImage, .deb, zips) et préparer macOS / Windows
+          sudo apt-get install -y -qq p7zip-full >/dev/null
+          sudo curl -fsSL -o /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          sudo chmod +x /usr/local/bin/appimagetool
+      - name: Moteurs Firefox ESR (Linux + Windows) rebrandés
+        run: |
+          A="https://archive.mozilla.org/pub/firefox/releases/$ESR"
+          mkdir -p eng/linux eng/win
+          curl -fsSL -o eng/linux.tar.xz "$A/linux-x86_64/fr/firefox-$ESR.tar.xz"
+          tar -xf eng/linux.tar.xz -C eng/linux
+          python3 tools/brand-engine.py eng/linux/firefox linux
+          curl -fsSL -o eng/win-setup.exe "$A/win64/fr/Firefox%20Setup%20$ESR.exe"
+          7z x -y -oeng/win eng/win-setup.exe >/dev/null
+          python3 tools/brand-engine.py eng/win/core windows
+      - name: Construire (AppImage, .deb, zip) et préparer Windows / macOS
         env:
           APPIMAGETOOL_ARGS: --appimage-extract-and-run
         run: |
-          tools/package.sh
-          tar -C build -cf build/stages.tar stage-mac stage-win
+          tools/package.sh --linux-engine eng/linux/firefox --win-engine eng/win/core
+          tar -C build -cf build/stage-win.tar stage-win
+          tar -C build -cf build/app.tar app
       - uses: actions/upload-artifact@v4
         with:
           name: linux
           path: build/release/*
+          compression-level: 0
       - uses: actions/upload-artifact@v4
         with:
-          name: stages
-          path: build/stages.tar
+          name: stage-win
+          path: build/stage-win.tar
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: build/app.tar
+          retention-days: 1
 
   windows:
     needs: [check, linux]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check.outputs.ref }}
       - uses: actions/download-artifact@v4
         with:
-          name: stages
+          name: stage-win
           path: build
-      - name: Compiler NounoursBrowser.exe, puis zip portable et setup.exe
+      - name: Moteur (icône et nom), NounoursBrowser.exe, zip portable et setup.exe
         shell: pwsh
         env:
           V: ${{ needs.check.outputs.version }}
         run: |
           $ErrorActionPreference = 'Stop'
-          tar -xf build\stages.tar -C build
+          tar -xf build\stage-win.tar -C build
+          $stage = (Resolve-Path build\stage-win).Path
+          $eng = Join-Path $stage "engine-$env:V"
+
+          # firefox.exe : icône, nom et éditeur affichés par Windows (barre des tâches, gestionnaire des tâches)
+          Invoke-WebRequest -Uri https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -OutFile rcedit.exe
+          foreach ($exe in @('firefox.exe', 'private_browsing.exe')) {
+            $p = Join-Path $eng $exe
+            if (Test-Path $p) {
+              .\rcedit.exe $p --set-icon branding\logo.ico `
+                --set-version-string FileDescription "Nounours Browser" `
+                --set-version-string ProductName "Nounours Browser" `
+                --set-version-string CompanyName "NounoursCorp" `
+                --set-version-string LegalCopyright "NounoursCorp - base sur Firefox ESR (Mozilla, MPL 2.0)"
+              if ($LASTEXITCODE -ne 0) { throw "rcedit a échoué sur $exe" }
+            }
+          }
+
+          # Lanceur
           $n = ($env:V -replace '^(\d+\.\d+\.\d+).*$', '$1') + '.0'
           $cs = 'launchers\windows\NounoursBrowser.cs'
           (Get-Content -Raw -Encoding UTF8 $cs).Replace('"0.0.0.0"', "`"$n`"").Replace('"0.0.0-dev"', "`"$env:V`"") |
@@ -100,62 +170,76 @@ jobs:
           $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
           & $csc /nologo /codepage:65001 /target:winexe /optimize+ /win32icon:branding\logo.ico `
             /r:System.Windows.Forms.dll /r:System.Drawing.dll `
-            /out:build\stage-win\NounoursBrowser.exe launchers\windows\NounoursBrowser.cs
+            /out:"$stage\NounoursBrowser.exe" $cs
           if ($LASTEXITCODE -ne 0) { throw "Compilation C# échouée" }
 
           New-Item -ItemType Directory -Force build\release | Out-Null
-          Push-Location build\stage-win
-          7z a -tzip "..\release\NounoursBrowser-$env:V-win-x64.zip" * | Out-Null
+          Push-Location $stage
+          7z a -tzip -mx=7 "..\release\NounoursBrowser-$env:V-win-x64.zip" * | Out-Null
           Pop-Location
 
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
-          & $iscc /Qp "/DAppVersion=$env:V" "/DStageDir=$((Resolve-Path build\stage-win).Path)" installers\windows\NounoursBrowser.iss
+          & $iscc /Qp "/DAppVersion=$env:V" "/DStageDir=$stage" installers\windows\NounoursBrowser.iss
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup a échoué" }
           Get-ChildItem build\release
       - uses: actions/upload-artifact@v4
         with:
           name: windows
           path: build/release/*
+          compression-level: 0
 
   macos:
     needs: [check, linux]
     runs-on: macos-latest
+    env:
+      ESR: ${{ needs.check.outputs.esr }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check.outputs.ref }}
       - uses: actions/download-artifact@v4
         with:
-          name: stages
+          name: app
           path: build
-      - name: Créer le .dmg
+      - name: Nounours Browser.app (moteur rebrandé, re-signé), .dmg et zip
         run: |
-          tar -xf build/stages.tar -C build
-          installers/macos/make-dmg.sh "${{ needs.check.outputs.version }}"
+          tar -xf build/app.tar -C build
+          curl -fsSL -o ff.dmg "https://archive.mozilla.org/pub/firefox/releases/$ESR/mac/fr/Firefox%20$ESR.dmg"
+          mnt=$(hdiutil attach -nobrowse -readonly -noautoopen ff.dmg | tail -1 | awk -F'\t' '{print $NF}')
+          app=$(find "$mnt" -maxdepth 1 -name '*.app' | head -1)
+          mkdir -p eng && ditto "$app" eng/Firefox.app
+          hdiutil detach "$mnt" -quiet
+          installers/macos/build-app.sh eng/Firefox.app build/app "${{ needs.check.outputs.version }}"
       - uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: build/release/*.dmg
+          path: build/release/*
+          compression-level: 0
 
   release:
     needs: [check, linux, windows, macos]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check.outputs.ref }}
       - uses: actions/download-artifact@v4
         with:
           path: dl
+          pattern: "[lwm]*"
           merge-multiple: true
       - name: Créer la release GitHub
         env:
           GH_TOKEN: ${{ github.token }}
           V: ${{ needs.check.outputs.version }}
         run: |
-          rm -f dl/stages.tar
+          rm -f dl/*.tar
           ls -la dl
           scripts/changelog-section.sh "$V" > notes.md
           [ -s notes.md ] || echo "Version $V" > notes.md
           pre=""; case "$V" in *-*) pre="--prerelease" ;; esac
-          gh release create "v$V" dl/* --title "Nounours Browser $V" --notes-file notes.md --target "$GITHUB_SHA" $pre
+          gh release create "v$V" dl/* --title "Nounours Browser $V" --notes-file notes.md --target "${{ needs.check.outputs.ref }}" $pre
       - name: Inscrire dans le catalogue NounoursLauncher
         env:
           GH_TOKEN: ${{ github.token }}

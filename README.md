@@ -13,7 +13,7 @@
 2. Dans *Applications*, choisissez **Nounours Browser**, puis cliquez sur **Installer**.
 3. Les mises à jour arrivent ensuite d'elles-mêmes, avec *Mettre à jour* ou *Tout mettre à jour*, ou en silence si la mise à jour automatique est activée.
 
-Au **premier lancement**, Nounours Browser télécharge son moteur, Firefox ESR (environ 90 Mo). Ensuite, l'**assistant de démarrage** s'ouvre.
+Au **premier lancement**, l'**assistant de démarrage** s'ouvre. On peut le revoir à tout moment : *Paramètres → Nounours Browser*, clic droit sur le bouton 🧸, menu *Outils*, ou l'engrenage du nouvel onglet.
 
 **À la main**, depuis les *Releases* :
 
@@ -25,7 +25,7 @@ Au **premier lancement**, Nounours Browser télécharge son moteur, Firefox ESR 
 
 ### Où sont mes données ?
 
-Le profil (marque-pages, extensions installées, mots de passe, réglages) et le moteur sont rangés **à part**. Une mise à jour remplace le dossier de l'appli, mais ne touche jamais à vos données :
+Le profil (marque-pages, extensions installées, mots de passe, réglages) est rangé **à part**. Une mise à jour remplace le dossier de l'appli, mais ne touche jamais à vos données :
 
 | Système | Dossier |
 |---|---|
@@ -43,14 +43,15 @@ Ce dossier contient aussi deux fichiers que vous pouvez modifier :
 |---|---|
 | `--eco` | Mode **Ultra éco**, mémorisé : Fission (isolation des sites) désactivée et 2 processus. Gros gain de RAM, mais sécurité réduite. |
 | `--balanced` | Revient au mode normal. |
-| `--reinstall-engine` | Retélécharge le moteur. |
-| `NB_FIREFOX=/chemin/firefox` | Utilise un autre Firefox (ESR, Developer Edition ou Nightly) à la place du moteur intégré. |
+| `NB_FIREFOX=/chemin/firefox` | Utilise un autre Firefox à la place du moteur intégré (tests). |
 
-## Pourquoi le moteur Firefox ESR ?
+## Le moteur : Firefox ESR, rebrandé
 
-- **Compatibilité :** les extensions Firefox ne fonctionnent qu'avec le moteur **Gecko**.
-- **Extension compagnon non signée :** la version **ESR** l'accepte, contrairement à Firefox standard. Vérifié : elle s'installe et s'active automatiquement.
-- **Pas de droits administrateur :** le moteur est installé dans le dossier de l'utilisateur. Firefox ESR continue de recevoir ses correctifs de sécurité par son propre système de mise à jour.
+- **Compatibilité :** les extensions Firefox ne fonctionnent qu'avec le moteur **Gecko**. Nounours Browser utilise le Firefox **ESR** officiel de Mozilla : sa version est figée dans `engine/ESR_VERSION` et téléchargée depuis archive.mozilla.org au moment du build.
+- **Rebranding** (`tools/brand-engine.py`) : seuls les textes et images de marque sont remplacés, le code n'est pas recompilé. On obtient « Nounours Browser » dans les titres, les menus, les Paramètres et « À propos », avec les logos, les icônes de fenêtre et les tuiles Windows. Sur Windows, l'icône et la description de `firefox.exe` sont aussi changées (`rcedit`). Sur macOS, l'appli s'appelle « Nounours Browser » et elle est re-signée ad hoc.
+- **Ajouts au moteur** (`engine-overlay/`) : un script autoconfig ajoute la section « Nounours Browser » aux Paramètres.
+- **Mises à jour :** les mises à jour internes de Mozilla sont désactivées, car elles annuleraient le rebranding. À la place, la CI vérifie chaque jour la sortie d'un nouveau Firefox ESR et publie alors automatiquement une nouvelle version de Nounours Browser. NounoursLauncher l'installe ensuite.
+- **Honnêteté :** « À propos » indique que Nounours Browser est basé sur Firefox ESR (licence MPL 2.0).
 
 ## Ce qu'apporte Nounours Browser
 
@@ -77,9 +78,9 @@ git commit -am "v1.1.0" && git push
 ```
 
 GitHub Actions (`.github/workflows/release.yml`) fait ensuite le reste :
-1. il vérifie l'extension (`web-ext lint`) ;
+1. il vérifie l'extension (`web-ext lint`), télécharge le Firefox ESR figé pour Linux, Windows et macOS, puis le rebrande ;
 2. Linux : il construit l'AppImage, le .deb et le zip ;
-3. Windows : il compile `NounoursBrowser.exe`, puis le zip et le `setup.exe` (Inno Setup) ; macOS : il construit le `.dmg` ;
+3. Windows : il compile `NounoursBrowser.exe`, puis le zip et le `setup.exe` (Inno Setup) ; macOS : il construit `Nounours Browser.app`, le `.dmg` et le zip ;
 4. il crée la release `v1.1.0` avec les notes du CHANGELOG ;
 5. il l'**inscrit dans le catalogue NounoursLauncher**, qui propose alors la mise à jour aux utilisateurs.
 
@@ -110,7 +111,8 @@ Les zips portables et le `.deb` sont aussi inscrits, comme solutions de repli. L
 
 ```bash
 tools/build-xpi.sh                       # construit dist/nounours-browser.xpi
-tools/package.sh [NounoursBrowser.exe]   # AppImage, .deb et zips dans build/release/ (+ préparation .dmg / setup.exe)
+python3 tools/brand-engine.py <moteur> linux|windows|macos   # rebrande un Firefox ESR décompressé
+tools/package.sh --linux-engine <moteur> [--win-engine <moteur>] [--exe NounoursBrowser.exe]
 npx web-ext lint --source-dir extension  # vérification Mozilla
 npx web-ext run  --source-dir extension  # test à chaud dans un Firefox temporaire
 ```
@@ -122,16 +124,21 @@ Les pages `extension/*/index.html` s'ouvrent aussi directement dans un navigateu
 ```
 branding/           logo (SVG, PNG 512/1024, ICO, ICNS) — NounoursCorp × Web
 extension/          extension compagnon (manifest, background, onboarding, newtab, popup, settings, shared)
-launchers/          windows/NounoursBrowser.cs · macos/Info.plist + NounoursBrowser · unix/nounours-browser(.sh)
-installers/         windows/NounoursBrowser.iss (Inno Setup) · macos/make-dmg.sh · linux/nounours-browser.desktop
+engine/             ESR_VERSION (version de Firefox ESR utilisée)
+engine-overlay/     ajouts au moteur (autoconfig : section « Nounours Browser » des Paramètres)
+launchers/          windows/NounoursBrowser.cs · macos/nounours-launcher · unix/nounours-browser(.sh)
+installers/         windows/NounoursBrowser.iss (Inno Setup) · macos/build-app.sh · linux/nounours-browser.desktop
 profile-template/   user.js, user-eco.js, user-overrides.js, chrome/userChrome.css
 distribution/       policies.json
-scripts/            set-version.sh, publish-catalog.sh, changelog-section.sh
-tools/              build-xpi.sh, package.sh
+scripts/            set-version.sh, publish-catalog.sh, changelog-section.sh, changelog-add.py
+tools/              brand-engine.py (rebranding du moteur), build-xpi.sh, package.sh
 .github/workflows/  release.yml
 ```
 
 ## Limites connues
+
+- Windows : pour épingler Nounours Browser à la barre des tâches, utilisez le raccourci du menu Démarrer (*clic droit → Épingler*). Épingler la fenêtre ouverte pointerait vers le moteur sans passer par le lanceur.
+- macOS : l'appli est signée « ad hoc » (sans compte Apple Developer). Installée par NounoursLauncher ou depuis le .dmg, elle s'ouvre normalement ; téléchargée à la main depuis un navigateur, il faut la première fois faire *clic droit → Ouvrir*.
 
 - `userChrome.css` dépend de la structure interne de Firefox. Une mise à jour majeure d'ESR, environ une fois par an, peut décaler un détail visuel. Les couleurs passent par l'API officielle des thèmes et ne cassent pas.
 - Les applis ne sont pas signées par Apple ni Microsoft. Comme pour le launcher, l'avertissement de Windows ou de macOS peut s'afficher en lançant l'archive à la main. Il ne s'affiche pas quand Nounours Browser est installé par NounoursLauncher.

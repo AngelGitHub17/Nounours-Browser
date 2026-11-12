@@ -6,5 +6,6 @@ Comment=Navigateur léger NounoursCorp, compatible avec les extensions Firefox
 Exec=nounours-browser %u
 Icon=nounours-browser
 Terminal=false
+StartupWMClass=nounours-browser
 Categories=Network;WebBrowser;
 MimeType=text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;

@@ -35,6 +35,7 @@ $("#sleep").onclick = async () => {
   refreshStats();
 };
 $("#settings").onclick = () => { browser.runtime.openOptionsPage(); window.close(); };
+$("#tour").onclick = () => { browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") }); window.close(); };
 $("#amo").onclick = () => { browser.tabs.create({ url: "https://addons.mozilla.org/fr/firefox/" }); window.close(); };
 
 (async () => {

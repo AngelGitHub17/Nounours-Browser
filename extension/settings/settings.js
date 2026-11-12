@@ -53,6 +53,7 @@ function build() {
 
   // Général
   $("#amo").onclick = () => browser.tabs.create({ url: "https://addons.mozilla.org/fr/firefox/" });
+  $("#replay-side").onclick = () => browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") });
   $("#replay").onclick = () => browser.tabs.create({ url: browser.runtime.getURL("onboarding/index.html") });
   $("#export").onclick = () => {
     const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });

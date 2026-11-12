@@ -56,18 +56,39 @@ static class NounoursBrowser
             bool eco = File.Exists(modeFile) && File.ReadAllText(modeFile).Trim() == "eco";
 
             string firefox = Environment.GetEnvironmentVariable("NB_FIREFOX");
+            string engineId = "custom";
             if (string.IsNullOrEmpty(firefox) || !File.Exists(firefox))
             {
-                firefox = Path.Combine(EngineDir, "firefox.exe");
-                if (args.Contains("--reinstall-engine") || !File.Exists(firefox)) InstallEngine();
-                if (!File.Exists(firefox)) throw new Exception("Le moteur n'a pas pu être installé.");
-                CopyPolicies(EngineDir);
+                // Moteur rebrandé livré avec l'appli : engine-<version>\ (le plus récent ; les anciens sont nettoyés)
+                string bundled = FindBundledEngine();
+                if (bundled != null)
+                {
+                    firefox = Path.Combine(bundled, "firefox.exe");
+                    engineId = Path.GetFileName(bundled);
+                    try { if (Directory.Exists(EngineDir)) Directory.Delete(EngineDir, true); } catch { } // moteur 1.0.x téléchargé
+                }
+                else
+                {
+                    // Développement : pas de moteur livré → Firefox ESR téléchargé (non rebrandé)
+                    firefox = Path.Combine(EngineDir, "firefox.exe");
+                    if (args.Contains("--reinstall-engine") || !File.Exists(firefox)) InstallEngine();
+                    if (!File.Exists(firefox)) throw new Exception("Le moteur n'a pas pu être installé.");
+                    CopyPolicies(EngineDir);
+                    engineId = "download";
+                }
             }
 
             PrepareProfile(eco);
 
             // Liens ou fichiers à ouvrir (ex. clic sur un lien quand Nounours Browser est le navigateur par défaut)
             var cmd = new StringBuilder("-profile \"" + ProfileDir + "\"");
+            string engineFile = Path.Combine(DataDir, "engine-version.txt");
+            string lastEngine = File.Exists(engineFile) ? File.ReadAllText(engineFile).Trim() : "";
+            if (lastEngine != engineId)
+            {
+                cmd.Append(" -purgecaches"); // nouveau moteur : caches de démarrage à refaire
+                try { File.WriteAllText(engineFile, engineId); } catch { }
+            }
             foreach (string a in args)
                 if (!a.StartsWith("--")) cmd.Append(" \"").Append(a.Replace("\"", "")).Append("\"");
             var psi = new ProcessStartInfo(firefox, cmd.ToString());
@@ -81,6 +102,24 @@ static class NounoursBrowser
             MessageBox.Show(ex.Message, "Nounours Browser", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
+    }
+
+    // ------------------------------------------------------------------ Moteur livré
+    static string FindBundledEngine()
+    {
+        string root = AppDomain.CurrentDomain.BaseDirectory;
+        var engines = Directory.GetDirectories(root, "engine*")
+            .Where(d => File.Exists(Path.Combine(d, "firefox.exe")))
+            .OrderByDescending(d => File.GetLastWriteTimeUtc(Path.Combine(d, "firefox.exe")))
+            .ThenByDescending(d => d, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        if (engines.Count == 0) return null;
+        // Les moteurs des versions précédentes sont supprimés s'ils ne sont plus utilisés
+        foreach (string old in engines.Skip(1))
+        {
+            try { Directory.Delete(old, true); } catch { }
+        }
+        return engines[0];
     }
 
     // ------------------------------------------------------------------ Profil

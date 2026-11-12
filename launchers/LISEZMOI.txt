@@ -8,7 +8,7 @@ Lancement manuel :
   macOS   : Nounours Browser.app
   Linux   : ./nounours-browser
 
-Au premier lancement, le moteur (Firefox ESR, ~90 Mo) est téléchargé automatiquement.
+Nounours Browser est basé sur Firefox ESR (Mozilla), livré avec l'appli.
 Votre profil (marque-pages, extensions, réglages) est rangé à part et n'est jamais
 effacé par une mise à jour :
   Windows : %LOCALAPPDATA%\NounoursBrowser
