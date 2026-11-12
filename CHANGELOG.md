@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 1.2.2 — 2026-11-12
+
+- **Favoris** : la barre des favoris est de retour (Ctrl+Maj+B pour la masquer ; ce choix est désormais conservé), ainsi que l'étoile ☆ dans la barre d'adresse.
+- **Onglets** : la taille des onglets est de nouveau gérée par le moteur (corrige l'affichage incorrect de la barre d'onglets sous Windows) ; le style macOS est conservé.
+- **Extensions** : leurs boutons sont forcés visibles dans la barre d'outils.
 ## 1.2.1 — 2026-11-12
 
 - Windows : les boutons de fenêtre sont de vrais ronds rouge / jaune / vert, sans les symboles ×, – et □ de Windows par-dessus (ni fond carré au survol).

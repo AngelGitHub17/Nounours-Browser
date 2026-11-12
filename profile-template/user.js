@@ -124,7 +124,6 @@ user_pref("browser.download.autohideButton", true);
 user_pref("browser.urlbar.trimURLs", true);
 user_pref("browser.tabs.warnOnClose", false);
 user_pref("general.smoothScroll", true);
-user_pref("browser.toolbars.bookmarks.visibility", "never");   // barre personnelle : Ctrl+Maj+B pour l'afficher
 // Onglets verticaux natifs (décommentez pour les activer)
 // user_pref("sidebar.revamp", true);
 // user_pref("sidebar.verticalTabs", true);
