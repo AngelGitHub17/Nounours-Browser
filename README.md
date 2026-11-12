@@ -15,10 +15,13 @@
 
 Au **premier lancement**, Nounours Browser télécharge son moteur, Firefox ESR (environ 90 Mo). Ensuite, l'**assistant de démarrage** s'ouvre.
 
-**À la main** : téléchargez l'archive de votre système dans les *Releases*, décompressez-la, puis lancez :
-- Windows : `NounoursBrowser.exe`
-- macOS : `Nounours Browser.app`
-- Linux : `./nounours-browser`
+**À la main**, depuis les *Releases* :
+
+| Système | Installeur | Portable |
+|---|---|---|
+| Windows | `NounoursBrowser-X.Y.Z-win-x64-setup.exe` (sans droits admin) | `…-win-x64.zip` → `NounoursBrowser.exe` |
+| macOS | `NounoursBrowser-X.Y.Z-mac-universal.dmg` → glisser dans Applications | `…-mac-universal.zip` → `Nounours Browser.app` |
+| Linux | `NounoursBrowser-X.Y.Z-x86_64.AppImage` ou `nounours-browser_X.Y.Z_amd64.deb` | `…-linux-x64.zip` → `./nounours-browser` |
 
 ### Où sont mes données ?
 
@@ -74,17 +77,21 @@ git commit -am "v1.1.0" && git push
 ```
 
 GitHub Actions (`.github/workflows/release.yml`) fait ensuite le reste :
-1. il compile `NounoursBrowser.exe` ;
-2. il vérifie l'extension (`web-ext lint`) ;
-3. il construit les 3 archives ;
+1. il vérifie l'extension (`web-ext lint`) ;
+2. Linux : il construit l'AppImage, le .deb et le zip ;
+3. Windows : il compile `NounoursBrowser.exe`, puis le zip et le `setup.exe` (Inno Setup) ; macOS : il construit le `.dmg` ;
 4. il crée la release `v1.1.0` avec les notes du CHANGELOG ;
 5. il l'**inscrit dans le catalogue NounoursLauncher**, qui propose alors la mise à jour aux utilisateurs.
 
-| Archive | Plateforme du catalogue | Ce que lance NounoursLauncher |
+Le launcher choisit automatiquement le meilleur fichier pour chaque système :
+
+| Plateforme | Choisi en priorité | Mise à jour |
 |---|---|---|
-| `NounoursBrowser-X.Y.Z-win-x64.zip` | `windows-x86_64` · `zip` | `NounoursBrowser.exe` (détecté automatiquement) |
-| `NounoursBrowser-X.Y.Z-mac-universal.zip` | `darwin-aarch64` + `darwin-x86_64` · `zip` | `Nounours Browser.app` |
-| `NounoursBrowser-X.Y.Z-linux-x64.zip` | `linux-x86_64` · `zip` | `nounours-browser` |
+| Windows | `setup.exe` (type `installer`, arguments `/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-`) | silencieuse |
+| macOS | `.dmg` → copié dans `~/Applications` | en un clic |
+| Linux | `.AppImage` | silencieuse |
+
+Les zips portables et le `.deb` sont aussi inscrits, comme solutions de repli. Les arguments et le chemin à lancer sont envoyés par la CI : rien à saisir dans le panel.
 
 ### Préparation unique
 
@@ -103,7 +110,7 @@ GitHub Actions (`.github/workflows/release.yml`) fait ensuite le reste :
 
 ```bash
 tools/build-xpi.sh                       # construit dist/nounours-browser.xpi
-tools/package.sh [NounoursBrowser.exe]   # construit les archives dans build/release/
+tools/package.sh [NounoursBrowser.exe]   # AppImage, .deb et zips dans build/release/ (+ préparation .dmg / setup.exe)
 npx web-ext lint --source-dir extension  # vérification Mozilla
 npx web-ext run  --source-dir extension  # test à chaud dans un Firefox temporaire
 ```
@@ -116,6 +123,7 @@ Les pages `extension/*/index.html` s'ouvrent aussi directement dans un navigateu
 branding/           logo (SVG, PNG 512/1024, ICO, ICNS) — NounoursCorp × Web
 extension/          extension compagnon (manifest, background, onboarding, newtab, popup, settings, shared)
 launchers/          windows/NounoursBrowser.cs · macos/Info.plist + NounoursBrowser · unix/nounours-browser(.sh)
+installers/         windows/NounoursBrowser.iss (Inno Setup) · macos/make-dmg.sh · linux/nounours-browser.desktop
 profile-template/   user.js, user-eco.js, user-overrides.js, chrome/userChrome.css
 distribution/       policies.json
 scripts/            set-version.sh, publish-catalog.sh, changelog-section.sh

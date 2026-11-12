@@ -24,6 +24,10 @@ using System.Windows.Forms;
 [assembly: System.Reflection.AssemblyProduct("Nounours Browser")]
 [assembly: System.Reflection.AssemblyCompany("NounoursCorp")]
 [assembly: System.Reflection.AssemblyCopyright("NounoursCorp")]
+// Remplacés par la CI (scripts/stamp-version.sh) ; « 0.0.0 » en développement
+[assembly: System.Reflection.AssemblyVersion("0.0.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("0.0.0-dev")]
 
 static class NounoursBrowser
 {
@@ -62,7 +66,11 @@ static class NounoursBrowser
 
             PrepareProfile(eco);
 
-            var psi = new ProcessStartInfo(firefox, "-profile \"" + ProfileDir + "\"");
+            // Liens ou fichiers à ouvrir (ex. clic sur un lien quand Nounours Browser est le navigateur par défaut)
+            var cmd = new StringBuilder("-profile \"" + ProfileDir + "\"");
+            foreach (string a in args)
+                if (!a.StartsWith("--")) cmd.Append(" \"").Append(a.Replace("\"", "")).Append("\"");
+            var psi = new ProcessStartInfo(firefox, cmd.ToString());
             psi.UseShellExecute = false;
             psi.WorkingDirectory = Path.GetDirectoryName(firefox);
             Process.Start(psi);
@@ -86,24 +94,61 @@ static class NounoursBrowser
         if (eco) sb.Append("\n").Append(File.ReadAllText(Path.Combine(tpl, "user-eco.js")));
         // Préférences personnelles : fichier conservé dans le dossier de données (jamais écrasé)
         string userOverrides = Path.Combine(DataDir, "user-overrides.js");
-        if (!File.Exists(userOverrides)) File.Copy(Path.Combine(tpl, "user-overrides.js"), userOverrides);
-        sb.Append("\n").Append(File.ReadAllText(userOverrides));
-        File.WriteAllText(Path.Combine(ProfileDir, "user.js"), sb.ToString(), new UTF8Encoding(false));
+        if (!File.Exists(userOverrides)) SafeCopy(Path.Combine(tpl, "user-overrides.js"), userOverrides);
+        if (File.Exists(userOverrides)) sb.Append("\n").Append(File.ReadAllText(userOverrides));
+        SafeWrite(Path.Combine(ProfileDir, "user.js"), sb.ToString());
 
-        File.Copy(Path.Combine(AppDir, "nounours-browser.xpi"), Path.Combine(ProfileDir, "extensions", ExtId + ".xpi"), true);
+        SafeCopy(Path.Combine(AppDir, "nounours-browser.xpi"), Path.Combine(ProfileDir, "extensions", ExtId + ".xpi"));
+    }
+
+    // Quand Nounours Browser est déjà ouvert, Firefox garde certains fichiers ouverts (l'extension .xpi
+    // notamment) : Windows refuse alors de les remplacer. On ne réécrit donc que ce qui a changé,
+    // et un fichier verrouillé est simplement mis à jour au prochain démarrage.
+    static void SafeCopy(string src, string dst)
+    {
+        try
+        {
+            if (File.Exists(dst) && SameContent(src, dst)) return;
+            File.Copy(src, dst, true);
+        }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
+    }
+
+    static void SafeWrite(string dst, string content)
+    {
+        try
+        {
+            if (File.Exists(dst) && File.ReadAllText(dst) == content) return;
+            File.WriteAllText(dst, content, new UTF8Encoding(false));
+        }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
+    }
+
+    static bool SameContent(string a, string b)
+    {
+        var fa = new FileInfo(a); var fb = new FileInfo(b);
+        if (fa.Length != fb.Length) return false;
+        using (var sha = System.Security.Cryptography.SHA256.Create())
+        using (var sa = File.Open(a, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+        using (var sb = File.Open(b, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+        {
+            return sha.ComputeHash(sa).SequenceEqual(sha.ComputeHash(sb));
+        }
     }
 
     static void CopyPolicies(string engineDir)
     {
         string dist = Path.Combine(engineDir, "distribution");
         Directory.CreateDirectory(dist);
-        File.Copy(Path.Combine(AppDir, "distribution", "policies.json"), Path.Combine(dist, "policies.json"), true);
+        SafeCopy(Path.Combine(AppDir, "distribution", "policies.json"), Path.Combine(dist, "policies.json"));
     }
 
     static void CopyDir(string src, string dst)
     {
         Directory.CreateDirectory(dst);
-        foreach (string f in Directory.GetFiles(src)) File.Copy(f, Path.Combine(dst, Path.GetFileName(f)), true);
+        foreach (string f in Directory.GetFiles(src)) SafeCopy(f, Path.Combine(dst, Path.GetFileName(f)));
         foreach (string d in Directory.GetDirectories(src)) CopyDir(d, Path.Combine(dst, Path.GetFileName(d)));
     }
 

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Nounours Browser",
   "short_name": "Nounours",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compagnon de Nounours Browser : démarrage rapide, thèmes façon macOS, mise en veille des onglets pour économiser la RAM.",
   "author": "DidiKaria — NounoursCorp",
   "homepage_url": "https://didikaria.fr",
@@ -62,5 +62,5 @@
       "description": "Basculer clair / sombre"
     }
   },
-  "version_name": "1.0.0"
+  "version_name": "1.0.1"
 }

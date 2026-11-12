@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Nounours Browser
+GenericName=Navigateur web
+Comment=Navigateur léger NounoursCorp, compatible avec les extensions Firefox
+Exec=nounours-browser %u
+Icon=nounours-browser
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;

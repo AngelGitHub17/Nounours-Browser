@@ -45,13 +45,29 @@ fail() {
   exit 1
 }
 
+# Copie seulement si le contenu a changé, via un renommage atomique : un fichier que
+# Firefox a ouvert (l'extension .xpi) n'est jamais modifié pendant qu'il le lit.
+put() { # put <source> <destination>
+  if [ -f "$2" ] && cmp -s "$1" "$2"; then return 0; fi
+  cp -f "$1" "$2.nbtmp" && mv -f "$2.nbtmp" "$2"
+}
+put_text() { # put_text <destination>  (contenu sur l'entrée standard)
+  local tmp="$1.nbtmp"
+  cat > "$tmp"
+  if [ -f "$1" ] && cmp -s "$tmp" "$1"; then rm -f "$tmp"; else mv -f "$tmp" "$1"; fi
+}
+
 # ---------------------------------------------------------------- options
 REINSTALL=0
+URLS=()
 for a in "$@"; do
   case "$a" in
+    -psn_*) ;;  # argument ajouté par macOS au lancement d'une .app
     --eco) echo eco > "$DATA_DIR/mode.txt" ;;
     --balanced) echo balanced > "$DATA_DIR/mode.txt" ;;
     --reinstall-engine) REINSTALL=1 ;;
+    -*) ;;
+    *) URLS+=("$a") ;;  # liens / fichiers à ouvrir
   esac
 done
 MODE="$(cat "$DATA_DIR/mode.txt" 2>/dev/null || echo balanced)"
@@ -92,22 +108,23 @@ else
   if [ "$REINSTALL" = 1 ] || [ ! -x "$FIREFOX" ]; then install_engine; fi
   [ -x "$FIREFOX" ] || fail "Le moteur n'a pas pu être installé."
   mkdir -p "$POLICIES_DIR"
-  cp -f "$APP_DIR/distribution/policies.json" "$POLICIES_DIR/"
+  put "$APP_DIR/distribution/policies.json" "$POLICIES_DIR/policies.json"
 fi
 
 # ---------------------------------------------------------------- profil
 TPL="$APP_DIR/profile-template"
 mkdir -p "$PROFILE_DIR/extensions"
-cp -R "$TPL/chrome" "$PROFILE_DIR/"
+mkdir -p "$PROFILE_DIR/chrome"
+for f in "$TPL"/chrome/*; do put "$f" "$PROFILE_DIR/chrome/$(basename "$f")"; done
 [ -f "$DATA_DIR/user-overrides.js" ] || cp "$TPL/user-overrides.js" "$DATA_DIR/user-overrides.js"
 {
   cat "$TPL/user.js"
   if [ "$MODE" = "eco" ]; then cat "$TPL/user-eco.js"; fi
   echo
   cat "$DATA_DIR/user-overrides.js"
-} > "$PROFILE_DIR/user.js"
-cp -f "$APP_DIR/nounours-browser.xpi" "$PROFILE_DIR/extensions/$EXT_ID.xpi"
+} | put_text "$PROFILE_DIR/user.js"
+put "$APP_DIR/nounours-browser.xpi" "$PROFILE_DIR/extensions/$EXT_ID.xpi"
 
 # ---------------------------------------------------------------- lancement
 # Sans -no-remote : si Nounours Browser est déjà ouvert, une nouvelle fenêtre s'y ouvre.
-nohup "$FIREFOX" -profile "$PROFILE_DIR" >/dev/null 2>&1 &
+nohup "$FIREFOX" -profile "$PROFILE_DIR" ${URLS[@]+"${URLS[@]}"} >/dev/null 2>&1 &
