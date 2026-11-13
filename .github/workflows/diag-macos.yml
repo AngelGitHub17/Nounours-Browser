@@ -14,51 +14,67 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Installer et lancer comme NounoursLauncher
+      - name: Variantes de signature (test headless du moteur)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set +e
-          mkdir -p out
-          TAG=$(cat diag/TAG 2>/dev/null || gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)
-          echo "tag=$TAG" > out/info.txt
-          sw_vers >> out/info.txt; uname -m >> out/info.txt
-          gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p '*mac-universal.dmg' -D dl
-          mnt=/tmp/nbmnt; mkdir -p $mnt
-          hdiutil attach -nobrowse -readonly -mountpoint $mnt dl/*.dmg >> out/info.txt 2>&1
-          ls -la $mnt >> out/info.txt
-          mkdir -p ~/Applications
-          APP=~/Applications/NounoursBrowser.app
-          ditto "$(ls -d $mnt/*.app | head -1)" "$APP"
-          hdiutil detach -quiet $mnt
-          { echo "== plist"; plutil -p "$APP/Contents/Info.plist";
-            echo "== MacOS"; ls -la "$APP/Contents/MacOS" | head -40;
-            echo "== codesign"; codesign --verify --deep --strict -vv "$APP" 2>&1; codesign -dvv "$APP" 2>&1;
-            echo "== spctl"; spctl -a -vv "$APP" 2>&1;
-            echo "== xattr"; xattr -l "$APP/Contents/MacOS/nounours-launcher"; } > out/bundle.txt 2>&1
+          mkdir -p out; sw_vers > out/info.txt
+          ESR=$(cat engine/ESR_VERSION)
+          curl -fsSL -o ff.dmg "https://archive.mozilla.org/pub/firefox/releases/$ESR/mac/fr/Firefox%20$ESR.dmg"
+          mnt=$(hdiutil attach -nobrowse -readonly -noautoopen ff.dmg | tail -1 | awk -F'\t' '{print $NF}')
+          ditto "$(ls -d "$mnt"/*.app | head -1)" orig.app; hdiutil detach -quiet "$mnt"
+          codesign -d --entitlements :- orig.app/Contents/MacOS/firefox > out/entitlements-firefox.plist 2>&1
+          codesign -d --entitlements :- orig.app/Contents/MacOS/plugin-container.app > out/entitlements-plugin.plist 2>&1
+          codesign -dvv orig.app/Contents/MacOS/firefox > out/orig-sig.txt 2>&1
+          test_app() { # test_app <nom> <app>
+            rm -rf /tmp/p_$1; mkdir -p /tmp/p_$1
+            timeout 90 "$2/Contents/MacOS/firefox" --headless -no-remote -profile /tmp/p_$1 --screenshot /tmp/s_$1.png about:blank > out/run-$1.txt 2>&1
+            echo "exit=$? screenshot=$(test -s /tmp/s_$1.png && echo OUI || echo non)" >> out/run-$1.txt
+            echo "$1 : $(tail -1 out/run-$1.txt)  $(grep -m1 -i 'xpcom' out/run-$1.txt)" >> out/summary.txt
+          }
+          test_app 1-original orig.app
 
-          START=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "== open -a" > out/run.txt
-          open -a "$APP" >> out/run.txt 2>&1; echo "open exit=$?" >> out/run.txt
-          sleep 30
-          ps axo pid,ppid,etime,command | grep -i "nounours\|firefox" | grep -v grep >> out/run.txt
-          screencapture -x out/shot-open.png
-          pkill -f "NounoursBrowser.app"; sleep 3
+          ditto orig.app v2.app; codesign --force --deep -s - v2.app 2>/dev/null
+          test_app 2-adhoc-deep v2.app
 
-          echo "== lancement direct du script" >> out/run.txt
-          ( "$APP/Contents/MacOS/nounours-launcher" > out/direct.txt 2>&1 & )
-          sleep 30
-          ps axo pid,ppid,etime,command | grep -i "nounours\|firefox" | grep -v grep >> out/run.txt
-          screencapture -x out/shot-direct.png
-          pkill -f "NounoursBrowser.app"; sleep 2
+          # 3 : ad hoc + hardened runtime + entitlements d'origine (firefox et sous-applis)
+          ditto orig.app v3.app
+          codesign -d --entitlements v3-ent.plist --xml orig.app/Contents/MacOS/firefox 2>/dev/null
+          codesign -d --entitlements v3-ent-pc.plist --xml orig.app/Contents/MacOS/plugin-container.app 2>/dev/null
+          find v3.app/Contents -name "*.dylib" -o -name "XUL" | while read f; do codesign --force -s - "$f"; done
+          for h in v3.app/Contents/MacOS/*.app v3.app/Contents/Frameworks/*.framework; do codesign --force --deep -s - --options runtime --entitlements v3-ent-pc.plist "$h"; done
+          codesign --force -s - --options runtime --entitlements v3-ent.plist v3.app/Contents/MacOS/firefox
+          codesign --force -s - --options runtime --entitlements v3-ent.plist v3.app
+          test_app 3-adhoc-runtime-ent v3.app
 
-          { echo "== données"; ls -la ~/Library/Application\ Support/NounoursBrowser 2>&1;
-            ls ~/Library/Application\ Support/NounoursBrowser/profile 2>&1 | head -50;
-            echo "== rapports de plantage"; ls -la ~/Library/Logs/DiagnosticReports/ 2>&1 | tail -20;
-            for f in $(ls -t ~/Library/Logs/DiagnosticReports/*irefox* ~/Library/Logs/DiagnosticReports/*ounours* 2>/dev/null | head -2); do echo "--- $f"; head -120 "$f"; done; } > out/data.txt 2>&1
-          log show --start "$START" --style compact \
-            --predicate 'process CONTAINS[c] "firefox" OR process CONTAINS[c] "nounours" OR eventMessage CONTAINS[c] "nounours" OR (subsystem == "com.apple.launchservices" AND eventMessage CONTAINS[c] "nounours") OR process == "amfid" OR process == "syspolicyd" OR process == "kernel"' \
-            2>/dev/null | grep -iv "sandbox: \|IOGPU" | tail -600 > out/log.txt
+          # 4 : ad hoc, entitlement « disable-library-validation » ajouté
+          ditto orig.app v4.app
+          /usr/libexec/PlistBuddy -c "Add :com.apple.security.cs.disable-library-validation bool true" v3-ent.plist 2>/dev/null
+          /usr/libexec/PlistBuddy -c "Add :com.apple.security.cs.disable-library-validation bool true" v3-ent-pc.plist 2>/dev/null
+          find v4.app/Contents -name "*.dylib" -o -name "XUL" | while read f; do codesign --force -s - "$f"; done
+          for h in v4.app/Contents/MacOS/*.app v4.app/Contents/Frameworks/*.framework; do codesign --force --deep -s - --entitlements v3-ent-pc.plist "$h"; done
+          codesign --force -s - --entitlements v3-ent.plist v4.app/Contents/MacOS/firefox
+          codesign --force -s - --entitlements v3-ent.plist v4.app
+          test_app 4-adhoc-dlv v4.app
+
+          # 5 : signatures Mozilla conservées ; seul le bundle externe (Info.plist modifié) re-signé, sans --deep
+          ditto orig.app v5.app
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName NounoursBrowser" v5.app/Contents/Info.plist
+          codesign --force -s - --preserve-metadata=entitlements v5.app/Contents/MacOS/firefox
+          test_app 5-mozilla-libs-firefox-adhoc v5.app
+
+          # 6 : rien re-signé, seulement des ressources modifiées (omni.ja) + Info.plist
+          ditto orig.app v6.app
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName NounoursBrowser" v6.app/Contents/Info.plist
+          echo "// test" >> v6.app/Contents/Resources/defaults/pref/channel-prefs.js
+          test_app 6-sans-resignature v6.app
+
+          # 7 : Info.plist d'origine, ressources modifiées, aucune re-signature
+          ditto orig.app v7.app
+          echo "// test" >> v7.app/Contents/Resources/defaults/pref/channel-prefs.js
+          test_app 7-ressources-seules v7.app
+          cat out/summary.txt
       - name: Publier les résultats (branche diag/results)
         run: |
           git config user.name "github-actions[bot]"
