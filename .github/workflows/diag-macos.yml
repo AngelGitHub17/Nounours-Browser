@@ -1,0 +1,69 @@
+# Diagnostic macOS : installe la release comme NounoursLauncher, lance l'appli, collecte journaux et captures.
+# Déclenché par un push sur la branche « diag/run » ; résultats poussés sur la branche « diag/results ».
+name: Diagnostic macOS
+
+on:
+  push:
+    branches: ["diag/run"]
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer et lancer comme NounoursLauncher
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          mkdir -p out
+          TAG=$(cat diag/TAG 2>/dev/null || gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          echo "tag=$TAG" > out/info.txt
+          sw_vers >> out/info.txt; uname -m >> out/info.txt
+          gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p '*mac-universal.dmg' -D dl
+          mnt=/tmp/nbmnt; mkdir -p $mnt
+          hdiutil attach -nobrowse -readonly -mountpoint $mnt dl/*.dmg >> out/info.txt 2>&1
+          ls -la $mnt >> out/info.txt
+          mkdir -p ~/Applications
+          APP=~/Applications/NounoursBrowser.app
+          ditto "$(ls -d $mnt/*.app | head -1)" "$APP"
+          hdiutil detach -quiet $mnt
+          { echo "== plist"; plutil -p "$APP/Contents/Info.plist";
+            echo "== MacOS"; ls -la "$APP/Contents/MacOS" | head -40;
+            echo "== codesign"; codesign --verify --deep --strict -vv "$APP" 2>&1; codesign -dvv "$APP" 2>&1;
+            echo "== spctl"; spctl -a -vv "$APP" 2>&1;
+            echo "== xattr"; xattr -l "$APP/Contents/MacOS/nounours-launcher"; } > out/bundle.txt 2>&1
+
+          START=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "== open -a" > out/run.txt
+          open -a "$APP" >> out/run.txt 2>&1; echo "open exit=$?" >> out/run.txt
+          sleep 30
+          ps axo pid,ppid,etime,command | grep -i "nounours\|firefox" | grep -v grep >> out/run.txt
+          screencapture -x out/shot-open.png
+          pkill -f "NounoursBrowser.app"; sleep 3
+
+          echo "== lancement direct du script" >> out/run.txt
+          ( "$APP/Contents/MacOS/nounours-launcher" > out/direct.txt 2>&1 & )
+          sleep 30
+          ps axo pid,ppid,etime,command | grep -i "nounours\|firefox" | grep -v grep >> out/run.txt
+          screencapture -x out/shot-direct.png
+          pkill -f "NounoursBrowser.app"; sleep 2
+
+          { echo "== données"; ls -la ~/Library/Application\ Support/NounoursBrowser 2>&1;
+            ls ~/Library/Application\ Support/NounoursBrowser/profile 2>&1 | head -50;
+            echo "== rapports de plantage"; ls -la ~/Library/Logs/DiagnosticReports/ 2>&1 | tail -20;
+            for f in $(ls -t ~/Library/Logs/DiagnosticReports/*irefox* ~/Library/Logs/DiagnosticReports/*ounours* 2>/dev/null | head -2); do echo "--- $f"; head -120 "$f"; done; } > out/data.txt 2>&1
+          log show --start "$START" --style compact \
+            --predicate 'process CONTAINS[c] "firefox" OR process CONTAINS[c] "nounours" OR eventMessage CONTAINS[c] "nounours" OR (subsystem == "com.apple.launchservices" AND eventMessage CONTAINS[c] "nounours") OR process == "amfid" OR process == "syspolicyd" OR process == "kernel"' \
+            2>/dev/null | grep -iv "sandbox: \|IOGPU" | tail -600 > out/log.txt
+      - name: Publier les résultats (branche diag/results)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan diag-results-tmp
+          git rm -rq --cached . ; find . -mindepth 1 -maxdepth 1 ! -name out ! -name .git -exec rm -rf {} +
+          git add out && git commit -qm "Diagnostic macOS $(date -u +%FT%TZ)"
+          git push -f origin HEAD:refs/heads/diag/results
