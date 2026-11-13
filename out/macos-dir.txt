@@ -1,0 +1,20 @@
+total 795320
+drwxr-xr-x  19 runner  staff        608 Nov 13 09:30 .
+drwxr-xr-x  11 runner  staff        352 Nov  3 19:05 ..
+-rwxr-xr-x   1 runner  staff    1246272 Nov 13 09:30 crashhelper
+-rwxr-xr-x   1 runner  staff     171888 Nov 13 09:30 firefox
+drwxr-xr-x   3 runner  staff         96 Nov  3 19:05 gpu-helper.app
+-rwxr-xr-x   1 runner  staff    2203968 Nov 13 09:30 libfreebl3.dylib
+-rwxr-xr-x   1 runner  staff   15315104 Nov 13 09:30 libgkcodecs.dylib
+-rwxr-xr-x   1 runner  staff     400096 Nov 13 09:30 liblgpllibs.dylib
+-rwxr-xr-x   1 runner  staff    5836336 Nov 13 09:30 libmozavcodec.dylib
+-rwxr-xr-x   1 runner  staff    1058784 Nov 13 09:30 libmozavutil.dylib
+-rwxr-xr-x   1 runner  staff    1185536 Nov 13 09:30 libmozglue.dylib
+-rwxr-xr-x   1 runner  staff    3070272 Nov 13 09:30 libmozinference.dylib
+-rwxr-xr-x   1 runner  staff    5549216 Nov 13 09:30 libnss3.dylib
+-rwxr-xr-x   1 runner  staff   18366544 Nov 13 09:30 libonnxruntime.dylib
+-rwxr-xr-x   1 runner  staff     735712 Nov 13 09:30 libsoftokn3.dylib
+drwxr-xr-x   3 runner  staff         96 Nov  3 19:05 media-plugin-helper.app
+-rwxr-xr-x   1 runner  staff    1679744 Nov 13 09:30 nmhproxy
+drwxr-xr-x   3 runner  staff         96 Nov  3 19:05 plugin-container.app
+-rwxr-xr-x   1 runner  staff  343637568 Nov 13 09:30 XUL

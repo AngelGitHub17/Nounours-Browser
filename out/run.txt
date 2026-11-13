@@ -1,0 +1,7 @@
+== 1) open -a (premier lancement)
+ 2666   00:32 /Users/runner/Applications/NounoursBrowser.app/Contents/MacOS/firefox -profile /Users/runner/Library/Application Support/NounoursBrowser/profile
+== 2) second open -a (déjà ouvert)
+ 2666   00:41 /Users/runner/Applications/NounoursBrowser.app/Contents/MacOS/firefox -profile /Users/runner/Library/Application Support/NounoursBrowser/profile
+== 3) avec un vrai Firefox ouvert
+ 3827   00:46 /private/tmp/RealFirefox.app/Contents/MacOS/firefox
+ 4134   00:29 /Users/runner/Applications/NounoursBrowser.app/Contents/MacOS/firefox -profile /Users/runner/Library/Application Support/NounoursBrowser/profile

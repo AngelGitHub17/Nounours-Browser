@@ -1,0 +1,48 @@
+Rebranding du moteur (macos) : /Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app
+  build/stage-mac/NounoursBrowser.app/Contents/Resources/browser/omni.ja : marque remplacée (4 éléments)
+  build/stage-mac/NounoursBrowser.app/Contents/Resources/omni.ja : 3 illustrations remplacées
+OK
+/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app: replacing existing signature
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/liblgpllibs.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/liblgpllibs.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/crashhelper
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/crashhelper
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libfreebl3.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libfreebl3.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozinference.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozinference.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libsoftokn3.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libsoftokn3.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/plugin-container.app
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/nmhproxy
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/nmhproxy
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/plugin-container.app
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/XUL
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/XUL
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozavutil.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozavutil.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozglue.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozglue.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libgkcodecs.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libgkcodecs.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/gpu-helper.app
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/gpu-helper.app
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/media-plugin-helper.app
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/media-plugin-helper.app
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozavcodec.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libmozavcodec.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libnss3.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libnss3.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libonnxruntime.dylib
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/MacOS/libonnxruntime.dylib
+--prepared:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/Frameworks/ChannelPrefs.framework
+--validated:/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app/Contents/Frameworks/ChannelPrefs.framework
+/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app: valid on disk
+/Users/runner/work/Nounours-Browser/Nounours-Browser/build/stage-mac/NounoursBrowser.app: satisfies its Designated Requirement
+created: /Users/runner/work/Nounours-Browser/Nounours-Browser/build/release/NounoursBrowser-1.2.3-diag-mac-universal.dmg
+total 779648
+drwxr-xr-x  4 runner  staff        128 Nov 13 09:31 .
+drwxr-xr-x  7 runner  staff        224 Nov 13 09:30 ..
+-rw-r--r--@ 1 runner  staff  197386246 Nov 13 09:31 NounoursBrowser-1.2.3-diag-mac-universal.dmg
+-rw-r--r--  1 runner  staff  196188475 Nov 13 09:31 NounoursBrowser-1.2.3-diag-mac-universal.zip
+build exit=0

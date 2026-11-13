@@ -1,0 +1,96 @@
+== données
+total 8
+drwxr-xr-x@  4 runner  staff   128 Nov 13 09:32 .
+drwx------+ 29 runner  staff   928 Nov 13 09:32 ..
+drwxr-xr-x@ 71 runner  staff  2272 Nov 13 09:33 profile
+-rw-r--r--   1 runner  staff   136 Nov 13 09:32 user-overrides.js
+8f2a7b23.sqlite
+8f2a7b23.sqlite-shm
+8f2a7b23.sqlite-wal
+activity-stream.inferred_personalization_feed.json
+activity-stream.newtab_content_event_stats.json
+activity-stream.shortcut_cache.json
+activity-stream.weather_feed.json
+addons.json
+addonStartup.json.lz4
+AlternateServices.bin
+bookmarkbackups
+bounce-tracking-protection.sqlite
+breach-alerts.db
+breach-alerts.db-shm
+breach-alerts.db-wal
+broadcast-listeners.json
+cache2
+cert9.db
+chrome
+compatibility.ini
+containers.json
+content-prefs.sqlite
+cookies.sqlite
+cookies.sqlite-wal
+crashes
+datareporting
+domain_to_categories.sqlite
+domain_to_categories.sqlite-journal
+extension-preferences.json
+extension-settings.json
+extension-store
+extension-store-menus
+extensions
+extensions.json
+favicons.sqlite
+favicons.sqlite-wal
+gmp-gmpopenh264
+gmp-widevinecdm
+handlers.json
+key4.db
+logins.db
+minidumps
+permissions.sqlite
+pkcs11.txt
+places.sqlite
+places.sqlite-wal
+prefs.js
+protections.sqlite
+safebrowsing
+search.json.mozlz4
+security_state
+sessionCheckpoints.json
+sessionstore-backups
+sessionstore.jsonlz4
+settings
+shield-preference-experiments.json
+SiteSecurityServiceState.bin
+startupCache
+storage
+storage.sqlite
+== extensions.json
+== profils Firefox
+[Install84295B34E79E738C]
+Default=Profiles/v2iaa302.default-esr-1
+Locked=1
+
+[Profile2]
+Name=default-esr-1
+IsRelative=1
+Path=Profiles/v2iaa302.default-esr-1
+
+[InstallDEE19D491AE51EBF]
+Default=Profiles/d9nh2fll.default-esr
+Locked=1
+
+[Profile1]
+Name=default
+IsRelative=1
+Path=Profiles/334x6601.default
+Default=1
+
+[Profile0]
+Name=default-esr
+IsRelative=1
+Path=Profiles/d9nh2fll.default-esr
+
+[General]
+StartWithLastProfile=1
+Version=2
+
