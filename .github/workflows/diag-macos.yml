@@ -31,11 +31,13 @@ jobs:
           APP=~/Applications/NounoursBrowser.app; mkdir -p ~/Applications
           ditto "$(ls -d $m2/*.app | head -1)" "$APP"; hdiutil detach -quiet $m2
           ls -la "$APP/Contents/MacOS" | head -30 > out/macos-dir.txt
+          { plutil -p "$APP/Contents/Info.plist" | grep -i "icon\|name\|identifier"; ls "$APP/Contents/Resources" | grep -i "icns\|car"; } > out/icon.txt
 
           echo "== 1) open -a (premier lancement)" > out/run.txt
           open -a "$APP"; sleep 35
           ps axo pid,etime,command | grep -i "[N]ounoursBrowser.app/Contents/MacOS/firefox" | grep -v contentproc | cut -c1-220 >> out/run.txt
           screencapture -x out/1-premier-lancement.png
+          screencapture -x -R 800,700,224,68 out/1-dock.png
           echo "== 2) second open -a (déjà ouvert)" >> out/run.txt
           open -a "$APP"; sleep 8
           ps axo pid,etime,command | grep -i "[N]ounoursBrowser.app/Contents/MacOS/firefox" | grep -v contentproc | cut -c1-220 >> out/run.txt

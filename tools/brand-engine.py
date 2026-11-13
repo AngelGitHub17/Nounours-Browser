@@ -170,10 +170,11 @@ def brand_macos(app):
     patch_gre_omni(os.path.join(res, "omni.ja"))
     install_overlay(res)
     install_policies(os.path.join(res, "distribution"))
-    # Icône de l'appli
-    for icns in glob.glob(os.path.join(res, "*.icns")):
-        if os.path.basename(icns) in ("firefox.icns",):
-            shutil.copy(os.path.join(BRANDING, "logo.icns"), icns)
+    # Icône de l'appli : macOS récent la prend dans Assets.car (clé CFBundleIconName) avant le .icns ;
+    # on retire cette clé et on pointe CFBundleIconFile sur notre icône.
+    shutil.copy(os.path.join(BRANDING, "logo.icns"), os.path.join(res, "nounoursbrowser.icns"))
+    for icns in glob.glob(os.path.join(res, "firefox.icns")):
+        shutil.copy(os.path.join(BRANDING, "logo.icns"), icns)
     # Nom de l'appli (barre des menus, Dock) et identifiant propre
     info = os.path.join(app, "Contents", "Info.plist")
     with open(info, "rb") as fh:
@@ -182,6 +183,8 @@ def brand_macos(app):
     pl["CFBundleDisplayName"] = NAME
     pl["CFBundleIdentifier"] = "fr.nounourscorp.browser"
     pl["CFBundleGetInfoString"] = NAME
+    pl["CFBundleIconFile"] = "nounoursbrowser"
+    pl.pop("CFBundleIconName", None)
     pl.pop("SUEnableAutomaticChecks", None)
     with open(info, "wb") as fh:
         plistlib.dump(pl, fh)
