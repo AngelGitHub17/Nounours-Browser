@@ -74,6 +74,26 @@ jobs:
           ditto orig.app v7.app
           echo "// test" >> v7.app/Contents/Resources/defaults/pref/channel-prefs.js
           test_app 7-ressources-seules v7.app
+          # 8 : rebranding NounoursBrowser + ad hoc --deep (exécutable principal = firefox)
+          ditto orig.app v8.app; python3 tools/brand-engine.py v8.app macos > out/brand8.txt 2>&1
+          codesign --force --deep -s - v8.app 2>/dev/null
+          test_app 8-rebrand-adhoc v8.app
+          # 9 : comme 8 + lanceur script en exécutable principal (= release actuelle)
+          ditto v8.app v9.app; cp launchers/macos/nounours-launcher v9.app/Contents/MacOS/; chmod +x v9.app/Contents/MacOS/nounours-launcher
+          /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable nounours-launcher" v9.app/Contents/Info.plist
+          xattr -cr v9.app; codesign --force --deep -s - v9.app 2>/dev/null
+          test_app 9-rebrand-script-principal v9.app
+          # 10 : comme 9 mais CFBundleExecutable reste firefox (lanceur à côté)
+          ditto v8.app v10.app; cp launchers/macos/nounours-launcher v10.app/Contents/MacOS/; chmod +x v10.app/Contents/MacOS/nounours-launcher
+          xattr -cr v10.app; codesign --force --deep -s - v10.app 2>/dev/null
+          test_app 10-rebrand-lanceur-a-cote v10.app
+          # 11 : release installée v1.2.3
+          gh release download "$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)" -R "$GITHUB_REPOSITORY" -p '*mac-universal.dmg' -D dl
+          m2=/tmp/nbm; mkdir -p $m2; hdiutil attach -nobrowse -readonly -mountpoint $m2 dl/*.dmg >/dev/null
+          ditto "$(ls -d $m2/*.app | head -1)" v11.app; hdiutil detach -quiet $m2
+          test_app 11-release v11.app
+          # 12 : lancement réel via « open -a » de la variante 8 et de la 9 (GUI)
+          for v in 8 9; do open -a "$PWD/v$v.app"; sleep 20; echo "open v$v : $(pgrep -f "v$v.app/Contents/MacOS/firefox" | wc -l | tr -d ' ') processus" >> out/summary.txt; screencapture -x out/open-v$v.png; pkill -f "v$v.app"; sleep 3; done
           cat out/summary.txt
       - name: Publier les résultats (branche diag/results)
         run: |
