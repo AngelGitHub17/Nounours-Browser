@@ -12,13 +12,11 @@ rm -rf "$STAGE"; mkdir -p "$STAGE" "$ROOT/build/release"
 ditto "$FF" "$APP"
 python3 "$ROOT/tools/brand-engine.py" "$APP" macos
 
-# Fichiers Nounours + lanceur en exécutable principal
+# Fichiers Nounours (lus au démarrage par nounours.cfg). Rien n'est ajouté dans Contents/MacOS :
+# le moteur reste l'exécutable principal (un fichier exécutable à côté de lui l'empêche de démarrer).
 ditto "$PAYLOAD" "$APP/Contents/Resources/nounours"
-chmod +x "$APP/Contents/Resources/nounours/nounours-browser.sh"
-cp "$ROOT/launchers/macos/nounours-launcher" "$APP/Contents/MacOS/nounours-launcher"
-chmod +x "$APP/Contents/MacOS/nounours-launcher"
+rm -f "$APP/Contents/Resources/nounours/nounours-browser.sh"
 PB=/usr/libexec/PlistBuddy
-$PB -c "Set :CFBundleExecutable nounours-launcher" "$APP/Contents/Info.plist"
 $PB -c "Set :CFBundleShortVersionString $V" "$APP/Contents/Info.plist"
 $PB -c "Set :CFBundleVersion $V" "$APP/Contents/Info.plist"
 

@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Variantes de signature (test headless du moteur)
+      - name: Construire l'appli comme la release, l'installer comme NounoursLauncher, la lancer
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -23,78 +23,36 @@ jobs:
           ESR=$(cat engine/ESR_VERSION)
           curl -fsSL -o ff.dmg "https://archive.mozilla.org/pub/firefox/releases/$ESR/mac/fr/Firefox%20$ESR.dmg"
           mnt=$(hdiutil attach -nobrowse -readonly -noautoopen ff.dmg | tail -1 | awk -F'\t' '{print $NF}')
-          ditto "$(ls -d "$mnt"/*.app | head -1)" orig.app; hdiutil detach -quiet "$mnt"
-          codesign -d --entitlements :- orig.app/Contents/MacOS/firefox > out/entitlements-firefox.plist 2>&1
-          codesign -d --entitlements :- orig.app/Contents/MacOS/plugin-container.app > out/entitlements-plugin.plist 2>&1
-          codesign -dvv orig.app/Contents/MacOS/firefox > out/orig-sig.txt 2>&1
-          test_app() { # test_app <nom> <app>
-            rm -rf /tmp/p_$1; mkdir -p /tmp/p_$1
-            perl -e "alarm 90; exec @ARGV" "$2/Contents/MacOS/firefox" --headless -no-remote -profile /tmp/p_$1 --screenshot /tmp/s_$1.png about:blank > out/run-$1.txt 2>&1
-            echo "exit=$? screenshot=$(test -s /tmp/s_$1.png && echo OUI || echo non)" >> out/run-$1.txt
-            echo "$1 : $(tail -1 out/run-$1.txt)  $(grep -m1 -i 'xpcom' out/run-$1.txt)" >> out/summary.txt
-          }
-          test_app 1-original orig.app
+          ditto "$(ls -d "$mnt"/*.app | head -1)" eng/Firefox.app; ditto "$(ls -d "$mnt"/*.app | head -1)" /tmp/RealFirefox.app; hdiutil detach -quiet "$mnt"
+          tools/package.sh > out/package.txt 2>&1
+          installers/macos/build-app.sh eng/Firefox.app build/app "$(jq -r '.version_name // .version' extension/manifest.json)-diag" > out/build.txt 2>&1
+          echo "build exit=$?" >> out/build.txt
+          m2=/tmp/nbm; mkdir -p $m2; hdiutil attach -nobrowse -readonly -mountpoint $m2 build/release/*.dmg >/dev/null
+          APP=~/Applications/NounoursBrowser.app; mkdir -p ~/Applications
+          ditto "$(ls -d $m2/*.app | head -1)" "$APP"; hdiutil detach -quiet $m2
+          ls -la "$APP/Contents/MacOS" | head -30 > out/macos-dir.txt
 
-          ditto orig.app v2.app; codesign --force --deep -s - v2.app 2>/dev/null
-          test_app 2-adhoc-deep v2.app
+          echo "== 1) open -a (premier lancement)" > out/run.txt
+          open -a "$APP"; sleep 35
+          ps axo pid,etime,command | grep -i "[N]ounoursBrowser.app/Contents/MacOS/firefox" | grep -v contentproc | cut -c1-220 >> out/run.txt
+          screencapture -x out/1-premier-lancement.png
+          echo "== 2) second open -a (déjà ouvert)" >> out/run.txt
+          open -a "$APP"; sleep 8
+          ps axo pid,etime,command | grep -i "[N]ounoursBrowser.app/Contents/MacOS/firefox" | grep -v contentproc | cut -c1-220 >> out/run.txt
+          osascript -e 'tell application id "fr.nounourscorp.browser" to quit' ; sleep 6; pkill -f NounoursBrowser.app; sleep 2
 
-          # 3 : ad hoc + hardened runtime + entitlements d'origine (firefox et sous-applis)
-          ditto orig.app v3.app
-          codesign -d --entitlements v3-ent.plist --xml orig.app/Contents/MacOS/firefox 2>/dev/null
-          codesign -d --entitlements v3-ent-pc.plist --xml orig.app/Contents/MacOS/plugin-container.app 2>/dev/null
-          find v3.app/Contents -name "*.dylib" -o -name "XUL" | while read f; do codesign --force -s - "$f"; done
-          for h in v3.app/Contents/MacOS/*.app v3.app/Contents/Frameworks/*.framework; do codesign --force --deep -s - --options runtime --entitlements v3-ent-pc.plist "$h"; done
-          codesign --force -s - --options runtime --entitlements v3-ent.plist v3.app/Contents/MacOS/firefox
-          codesign --force -s - --options runtime --entitlements v3-ent.plist v3.app
-          test_app 3-adhoc-runtime-ent v3.app
+          echo "== 3) avec un vrai Firefox ouvert" >> out/run.txt
+          open -a /tmp/RealFirefox.app; sleep 15
+          open -a "$APP"; sleep 30
+          ps axo pid,etime,command | grep -i "[F]irefox.app/Contents/MacOS/firefox\|[N]ounoursBrowser.app/Contents/MacOS/firefox" | grep -v contentproc | cut -c1-220 >> out/run.txt
+          screencapture -x out/3-avec-firefox.png
+          pkill -f NounoursBrowser.app; pkill -f RealFirefox.app; sleep 2
 
-          # 4 : ad hoc, entitlement « disable-library-validation » ajouté
-          ditto orig.app v4.app
-          /usr/libexec/PlistBuddy -c "Add :com.apple.security.cs.disable-library-validation bool true" v3-ent.plist 2>/dev/null
-          /usr/libexec/PlistBuddy -c "Add :com.apple.security.cs.disable-library-validation bool true" v3-ent-pc.plist 2>/dev/null
-          find v4.app/Contents -name "*.dylib" -o -name "XUL" | while read f; do codesign --force -s - "$f"; done
-          for h in v4.app/Contents/MacOS/*.app v4.app/Contents/Frameworks/*.framework; do codesign --force --deep -s - --entitlements v3-ent-pc.plist "$h"; done
-          codesign --force -s - --entitlements v3-ent.plist v4.app/Contents/MacOS/firefox
-          codesign --force -s - --entitlements v3-ent.plist v4.app
-          test_app 4-adhoc-dlv v4.app
-
-          # 5 : signatures Mozilla conservées ; seul le bundle externe (Info.plist modifié) re-signé, sans --deep
-          ditto orig.app v5.app
-          /usr/libexec/PlistBuddy -c "Set :CFBundleName NounoursBrowser" v5.app/Contents/Info.plist
-          codesign --force -s - --preserve-metadata=entitlements v5.app/Contents/MacOS/firefox
-          test_app 5-mozilla-libs-firefox-adhoc v5.app
-
-          # 6 : rien re-signé, seulement des ressources modifiées (omni.ja) + Info.plist
-          ditto orig.app v6.app
-          /usr/libexec/PlistBuddy -c "Set :CFBundleName NounoursBrowser" v6.app/Contents/Info.plist
-          echo "// test" >> v6.app/Contents/Resources/defaults/pref/channel-prefs.js
-          test_app 6-sans-resignature v6.app
-
-          # 7 : Info.plist d'origine, ressources modifiées, aucune re-signature
-          ditto orig.app v7.app
-          echo "// test" >> v7.app/Contents/Resources/defaults/pref/channel-prefs.js
-          test_app 7-ressources-seules v7.app
-          # 8 : rebranding NounoursBrowser + ad hoc --deep (exécutable principal = firefox)
-          ditto orig.app v8.app; python3 tools/brand-engine.py v8.app macos > out/brand8.txt 2>&1
-          codesign --force --deep -s - v8.app 2>/dev/null
-          test_app 8-rebrand-adhoc v8.app
-          # 9 : comme 8 + lanceur script en exécutable principal (= release actuelle)
-          ditto v8.app v9.app; cp launchers/macos/nounours-launcher v9.app/Contents/MacOS/; chmod +x v9.app/Contents/MacOS/nounours-launcher
-          /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable nounours-launcher" v9.app/Contents/Info.plist
-          xattr -cr v9.app; codesign --force --deep -s - v9.app 2>/dev/null
-          test_app 9-rebrand-script-principal v9.app
-          # 10 : comme 9 mais CFBundleExecutable reste firefox (lanceur à côté)
-          ditto v8.app v10.app; cp launchers/macos/nounours-launcher v10.app/Contents/MacOS/; chmod +x v10.app/Contents/MacOS/nounours-launcher
-          xattr -cr v10.app; codesign --force --deep -s - v10.app 2>/dev/null
-          test_app 10-rebrand-lanceur-a-cote v10.app
-          # 11 : release installée v1.2.3
-          gh release download "$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)" -R "$GITHUB_REPOSITORY" -p '*mac-universal.dmg' -D dl
-          m2=/tmp/nbm; mkdir -p $m2; hdiutil attach -nobrowse -readonly -mountpoint $m2 dl/*.dmg >/dev/null
-          ditto "$(ls -d $m2/*.app | head -1)" v11.app; hdiutil detach -quiet $m2
-          test_app 11-release v11.app
-          # 12 : lancement réel via « open -a » de la variante 8 et de la 9 (GUI)
-          for v in 8 9; do open -a "$PWD/v$v.app"; sleep 20; echo "open v$v : $(pgrep -f "v$v.app/Contents/MacOS/firefox" | wc -l | tr -d ' ') processus" >> out/summary.txt; screencapture -x out/open-v$v.png; pkill -f "v$v.app"; sleep 3; done
-          cat out/summary.txt
+          { echo "== données"; ls -la ~/Library/Application\ Support/NounoursBrowser 2>&1;
+            ls ~/Library/Application\ Support/NounoursBrowser/profile 2>&1 | head -60;
+            echo "== extensions.json"; grep -o '"id":"[^"]*","syncGUID[^}]*"active":[a-z]*' ~/Library/Application\ Support/NounoursBrowser/profile/extensions.json 2>/dev/null | cut -c1-120 | head;
+            echo "== profils Firefox"; cat ~/Library/Application\ Support/Firefox/profiles.ini 2>&1; } > out/data.txt 2>&1
+          cat out/run.txt
       - name: Publier les résultats (branche diag/results)
         run: |
           git config user.name "github-actions[bot]"
