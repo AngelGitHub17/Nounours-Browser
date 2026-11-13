@@ -29,7 +29,7 @@ jobs:
           codesign -dvv orig.app/Contents/MacOS/firefox > out/orig-sig.txt 2>&1
           test_app() { # test_app <nom> <app>
             rm -rf /tmp/p_$1; mkdir -p /tmp/p_$1
-            timeout 90 "$2/Contents/MacOS/firefox" --headless -no-remote -profile /tmp/p_$1 --screenshot /tmp/s_$1.png about:blank > out/run-$1.txt 2>&1
+            perl -e "alarm 90; exec @ARGV" "$2/Contents/MacOS/firefox" --headless -no-remote -profile /tmp/p_$1 --screenshot /tmp/s_$1.png about:blank > out/run-$1.txt 2>&1
             echo "exit=$? screenshot=$(test -s /tmp/s_$1.png && echo OUI || echo non)" >> out/run-$1.txt
             echo "$1 : $(tail -1 out/run-$1.txt)  $(grep -m1 -i 'xpcom' out/run-$1.txt)" >> out/summary.txt
           }
