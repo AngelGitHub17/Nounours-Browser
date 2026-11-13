@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 1.3.0 — 2026-11-13
+
+- **macOS : NounoursBrowser démarre enfin.** Sur macOS récent, le lanceur placé à côté du moteur dans l'appli empêchait celui-ci de se charger (« Couldn't load XPCOM »). Le moteur est désormais l'exécutable principal de NounoursBrowser.app et prépare lui-même votre profil. Vérifié sur un vrai Mac (macOS 26) : premier lancement, second clic (même fenêtre), et en même temps qu'un vrai Firefox ouvert.
+- macOS : l'icône NounoursBrowser s'affiche dans le Dock (au lieu de celle de Firefox).
 ## 1.2.3 — 2026-11-12
 
 - **Toujours le bon profil** : si le moteur est lancé directement (fenêtre épinglée à la barre des tâches, raccourci vers firefox.exe…), il passe automatiquement la main à NounoursBrowser, qui rouvre votre profil avec vos extensions et réglages.

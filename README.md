@@ -49,7 +49,8 @@ Ce dossier contient aussi deux fichiers que vous pouvez modifier :
 
 - **Compatibilité :** les extensions Firefox ne fonctionnent qu'avec le moteur **Gecko**. NounoursBrowser utilise le Firefox **ESR** officiel de Mozilla : sa version est figée dans `engine/ESR_VERSION` et téléchargée depuis archive.mozilla.org au moment du build.
 - **Rebranding** (`tools/brand-engine.py`) : seuls les textes et images de marque sont remplacés, le code n'est pas recompilé. On obtient « NounoursBrowser » dans les titres, les menus, les Paramètres et « À propos », avec les logos, les icônes de fenêtre et les tuiles Windows. Sur Windows, l'icône et la description de `firefox.exe` sont aussi changées (`rcedit`). Sur macOS, l'appli s'appelle « NounoursBrowser » et elle est re-signée ad hoc.
-- **Ajouts au moteur** (`engine-overlay/`) : un script autoconfig ajoute la section « NounoursBrowser » aux Paramètres.
+- **Ajouts au moteur** (`engine-overlay/nounours.cfg`, script autoconfig) : section « NounoursBrowser » des Paramètres, valeurs par défaut, et gestion du profil. Sur **macOS**, le moteur est l'exécutable principal de `NounoursBrowser.app` : c'est ce script qui prépare le profil à chaque démarrage (fichiers de `Contents/Resources/nounours/`) et relance le moteur dessus si besoin. Aucun autre exécutable ne doit être ajouté dans `Contents/MacOS`, sinon le moteur ne démarre plus. Sur Windows et Linux, ce script relance le lanceur si le moteur a été démarré sans le profil NounoursBrowser.
+- **Diagnostic macOS** : pousser sur la branche `diag/run` exécute `.github/workflows/diag-macos.yml` sur un vrai Mac (construction, installation, lancement, captures). Les résultats sont publiés sur la branche `diag/results`.
 - **Mises à jour :** les mises à jour internes de Mozilla sont désactivées, car elles annuleraient le rebranding. À la place, la CI vérifie chaque jour la sortie d'un nouveau Firefox ESR et publie alors automatiquement une nouvelle version de NounoursBrowser. NounoursLauncher l'installe ensuite.
 - **Honnêteté :** « À propos » indique que NounoursBrowser est basé sur Firefox ESR (licence MPL 2.0).
 
@@ -126,7 +127,7 @@ branding/           logo (SVG, PNG 512/1024, ICO, ICNS) — NounoursCorp × Web
 extension/          extension compagnon (manifest, background, onboarding, newtab, popup, settings, shared)
 engine/             ESR_VERSION (version de Firefox ESR utilisée)
 engine-overlay/     ajouts au moteur (autoconfig : section « NounoursBrowser » des Paramètres)
-launchers/          windows/NounoursBrowser.cs · macos/nounours-launcher · unix/nounours-browser(.sh)
+launchers/          windows/NounoursBrowser.cs · unix/nounours-browser(.sh) (Linux) — macOS : géré par nounours.cfg
 installers/         windows/NounoursBrowser.iss (Inno Setup) · macos/build-app.sh · linux/nounours-browser.desktop
 profile-template/   user.js, user-eco.js, user-overrides.js, chrome/userChrome.css
 distribution/       policies.json
