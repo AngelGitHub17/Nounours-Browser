@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 1.3.1 — 2026-11-24
+
+- Moteur mis à jour : Firefox ESR 153.8.0 (correctifs de sécurité).
+
 ## 1.3.0 — 2026-11-13
 
 - **macOS : NounoursBrowser démarre enfin.** Sur macOS récent, le lanceur placé à côté du moteur dans l'appli empêchait celui-ci de se charger (« Couldn't load XPCOM »). Le moteur est désormais l'exécutable principal de NounoursBrowser.app et prépare lui-même votre profil. Vérifié sur un vrai Mac (macOS 26) : premier lancement, second clic (même fenêtre), et en même temps qu'un vrai Firefox ouvert.
